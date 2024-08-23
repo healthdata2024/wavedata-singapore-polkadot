@@ -182,7 +182,7 @@ function Login() {
 							Register
 						</button>
 						<p>
-							<a href="https://wavedata-singapore-polkadot-app.vercel.app/" title="applink" target="_blank" class="w3-hover-text-green">
+							<a href="https://wavedata-singapore-polkadot.vercel.app/" title="applink" target="_blank" class="w3-hover-text-green">
 								Open App
 							</a> 
 						</p>
