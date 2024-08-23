@@ -183,6 +183,11 @@ function Login() {
 						<button onClick={registerLink} className="bg-gray-200 text-gray-500 rounded-md shadow-md h-10 w-full mt-3 hover:bg-black transition-colors">
 							Register
 						</button>
+						<p>
+							<a href="https://wavedata-singapore-polkadot-app.vercel.app/" title="applink" target="_blank" class="w3-hover-text-green">
+								Open App
+							</a> 
+						</p>
 					</div>
 				</div>
 			</div>
