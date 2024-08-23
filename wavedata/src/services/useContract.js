@@ -7,6 +7,11 @@ import {getDecodedOutput} from "./helpers";
 
 import getContract from "./getContract";
 import {web3Enable, isWeb3Injected, web3Accounts} from "@polkadot/extension-dapp";
+
+
+
+const WS_PROVIDER = "wss://shibuya-rpc.dwellir.com"; // shibuya
+const CONTRACT_ADDRESS=  ""
 export default function useContract() {
 	const [contractInstance, setContractInstance] = useState({
 		api: null,
@@ -21,8 +26,7 @@ export default function useContract() {
 		currentChain: null
 	});
 
-	const WS_PROVIDER = "wss://shibuya-rpc.dwellir.com"; // shibuya
-
+	
 	useEffect(() => {
 		const fetchData = async () => {
 			if (window.localStorage.getItem("type") === "polkadot") {
@@ -112,7 +116,7 @@ export default function useContract() {
 	}
 
 	async function ReadContractValue(api, signerAddress, msg, msgWithArgs) {
-		const result = await api.call.contractsApi.call(signerAddress, "bcgFoRZN14yzSx9fM1ChqZzrXymgk1wXFF25uLeP9xWz7u1", 0, null, null, msg.toU8a(msgWithArgs));
+		const result = await api.call.contractsApi.call(signerAddress,CONTRACT_ADDRESS, 0, null, null, msg.toU8a(msgWithArgs));
 
 		const decodedOutput = getDecodedOutput(result, msg, api.registry).decodedOutput;
 

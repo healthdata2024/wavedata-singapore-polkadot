@@ -10,10 +10,10 @@ function DashboardLayout() {
 
    const ROUTES = [
       {
-         id: 'trials',
+         id: 'studies',
          IconComponent: BeakerIcon,
-         title: 'Trials',
-         route: '/trials',
+         title: 'Studies',
+         route: '/studies',
       },
       {
          id: 'team',

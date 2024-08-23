@@ -5,16 +5,17 @@ import Button from 'react-bootstrap/Button';
 import { CurrencyDollarIcon } from "@heroicons/react/solid";
 import useContract from '../../services/useContract'
 
-export default function UpdateTrialModal({
+export default function UpdateSurveyModal({
     show,
     onHide,
     id
 }) {
 
+  
 	const {  api,contract, signerAddress, sendTransaction,ReadContractValue,ReadContractByQuery,getMessage,getQuery,getTX } = useContract();
  
 
-    async function UpdateSurvey(e) {
+    async function UpdateSurveyHandle(e) {
         e.preventDefault();
         const { name, description, image, reward, updateBTN } = e.target;
         var notificationSuccess = e.target.children[0].firstChild;
@@ -23,7 +24,7 @@ export default function UpdateTrialModal({
         updateBTN.children[1].innerText = ""
         updateBTN.disabled = true;
         try {
-			await sendTransaction(api,signerAddress, "UpdateSurvey",[parseInt(id), name.value, description.value, image.value, Number(reward.value)]);
+            await sendTransaction(api,signerAddress, "UpdateSurvey",[parseInt(id), name.value, description.value, image.value, Number(reward.value)]);
             notificationSuccess.style.display = "block";
             updateBTN.children[0].classList.add("hidden")
             updateBTN.children[1].innerText = "Update Survey"
@@ -47,7 +48,7 @@ export default function UpdateTrialModal({
             let survey_element = await ReadContractByQuery(api,signerAddress, getQuery("_surveyMap"),[parseInt(id)]);
             var new_survey = {
                 id: Number(survey_element.surveyId),
-                trial_id: Number(survey_element.trialId),
+                study_id: Number(survey_element.studyId),
                 user_id: Number(survey_element.userId),
                 name: survey_element.name,
                 description: survey_element.description,
@@ -62,6 +63,7 @@ export default function UpdateTrialModal({
             document.getElementById("reward").value = new_survey.reward
 
         }
+
     }
 
 
@@ -84,7 +86,7 @@ export default function UpdateTrialModal({
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body className="show-grid">
-                <Form onSubmit={UpdateSurvey}>
+                <Form onSubmit={UpdateSurveyHandle}>
                     <Form.Group className="mb-3 grid" controlId="formGroupName">
                         <div id='notificationSuccess' name="notificationSuccess" style={{ display: 'none' }} className="mt-4 text-center bg-gray-200 relative text-gray-500 py-3 px-3 rounded-lg">
                             Success!
@@ -105,7 +107,6 @@ export default function UpdateTrialModal({
                         <Form.Label>Image</Form.Label>
                         <input required name="image" placeholder="Image link" id="updateimage" className="border rounded pt-2 pb-2 border-gray-400 pl-4 pr-4" />
                     </Form.Group>
-
                     <Form.Group className="mb-3 grid" controlId="formGroupName">
                         <Form.Label>Reward</Form.Label>
                         <div className="input-group">

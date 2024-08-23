@@ -1,13 +1,14 @@
-import {useNavigate, useLocation} from "react-router-dom";
-import {useState, useEffect} from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
 import useContract from "../../services/useContract";
 function ResetAll() {
 	let navigate = useNavigate();
 	const {api, contract, signerAddress, sendTransaction, ReadContractValue, ReadContractByQuery, getMessage, getQuery} = useContract();
 
 	async function ResetClick(event) {
-		
-		
+
+
+			
 		event.target.disabled = true;
 		await sendTransaction(api,signerAddress, "reset_all");
 		window.location.href = "/";

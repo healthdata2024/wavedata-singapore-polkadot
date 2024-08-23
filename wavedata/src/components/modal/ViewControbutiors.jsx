@@ -8,6 +8,7 @@ import GraphChartLine from "../Card/graphChartLine";
 import GraphChartBar from "../Card/graphChartBar";
 import useContract from "../../services/useContract";
 
+
 export default function ViewControbutiors({show,setShow, onHide, id}) {
 	ChartJS.register(BarElement, CategoryScale, LinearScale, PointElement, Tooltip);
 	const {  api,contract, signerAddress, sendTransaction,ReadContractValue,ReadContractByQuery,getMessage,getQuery,getTX } = useContract();

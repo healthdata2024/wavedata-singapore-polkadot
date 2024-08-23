@@ -35,8 +35,8 @@ mod wavedata {
 
     #[derive(Debug, PartialEq, Eq, Encode, Decode)]
     #[cfg_attr(feature = "std", derive(ink::storage::traits::StorageLayout, scale_info::TypeInfo))]
-    pub struct trial_struct {
-        trial_id: i32,
+    pub struct study_struct {
+        study_id: i32,
         user_id: i32,
         image: String,
         title: String,
@@ -54,7 +54,7 @@ mod wavedata {
     #[cfg_attr(feature = "std", derive(ink::storage::traits::StorageLayout, scale_info::TypeInfo))]
     pub struct survey_struct {
         survey_id: i32,
-        trial_id: i32,
+        study_id: i32,
         user_id: i32,
         name: String,
         description: String,
@@ -81,7 +81,7 @@ mod wavedata {
     #[cfg_attr(feature = "std", derive(ink::storage::traits::StorageLayout, scale_info::TypeInfo))]
     pub struct ongoing_struct {
         ongoing_id: i32,
-        trial_id: i32,
+        study_id: i32,
         user_id: i32,
         date: String,
         given_permission: String,
@@ -91,7 +91,7 @@ mod wavedata {
     #[cfg_attr(feature = "std", derive(ink::storage::traits::StorageLayout, scale_info::TypeInfo))]
     pub struct survey_question_answer_struct {
         answer_id: i32,
-        trial_id: i32,
+        study_id: i32,
         user_id: i32,
         survey_id: i32,
         section_id: String,
@@ -103,7 +103,7 @@ mod wavedata {
     #[cfg_attr(feature = "std", derive(ink::storage::traits::StorageLayout, scale_info::TypeInfo))]
     pub struct completed_survey_struct {
         completed_survey_id: i32,
-        trial_id: i32,
+        study_id: i32,
         user_id: i32,
         survey_id: i32,
         date: String,
@@ -117,7 +117,7 @@ mod wavedata {
         //Variables
         _UserIds: i32,
         _FhirIds: i32,
-        _TrialIds: i32,
+        _StudyIds: i32,
         _SurveyIds: i32,
         _SurveyCategoryIds: i32,
         _OngoingIds: i32,
@@ -125,8 +125,8 @@ mod wavedata {
         _CompletedSurveyIds: i32,
         //Variables Multiples
         _userMap: Mapping<i32, user_struct>,
-        _trialMap: Mapping<i32, trial_struct>,
-        _trialAudienceMap: Mapping<i32, String>,
+        _studyMap: Mapping<i32, study_struct>,
+        _studyAudienceMap: Mapping<i32, String>,
         _surveyMap: Mapping<i32, survey_struct>,
         _categoryMap: Mapping<i32, survey_category_struct>,
         _sectionsMap: Mapping<i32, String>,
@@ -144,7 +144,7 @@ mod wavedata {
                 //Variables
                 _UserIds: 0,
                 _FhirIds: 0,
-                _TrialIds: 0,
+                _StudyIds: 0,
                 _SurveyIds: 0,
                 _SurveyCategoryIds: 0,
                 _OngoingIds: 0,
@@ -152,8 +152,8 @@ mod wavedata {
                 _CompletedSurveyIds: 0,
                 //Variables Multiples
                 _userMap: Mapping::new(),
-                _trialMap: Mapping::new(),
-                _trialAudienceMap: Mapping::new(),
+                _studyMap: Mapping::new(),
+                _studyAudienceMap: Mapping::new(),
                 _surveyMap: Mapping::new(),
                 _categoryMap: Mapping::new(),
                 _sectionsMap: Mapping::new(),
@@ -246,11 +246,11 @@ mod wavedata {
 
         // endregion: Users
 
-        // region: Trial
+        // region: Study
         #[ink(message)]
-        pub fn CreateTrial(&mut self, user_id: i32, image: String, title: String, description: String, permission: String, contributors: i32, audience: i32, budget: i32) {
-            let stuff = trial_struct {
-                trial_id: self._TrialIds,
+        pub fn CreateStudy(&mut self, user_id: i32, image: String, title: String, description: String, permission: String, contributors: i32, audience: i32, budget: i32) {
+            let stuff = study_struct {
+                study_id: self._StudyIds,
                 user_id: user_id,
                 image: image,
                 title: title,
@@ -263,15 +263,15 @@ mod wavedata {
                 reward_price: 0,
                 total_spending_limit: budget,
             };
-            self._trialMap.insert(self._TrialIds, &stuff);
-            self._TrialIds += 1;
+            self._studyMap.insert(self._StudyIds, &stuff);
+            self._StudyIds += 1;
         }
 
         #[ink(message)]
-        pub fn CreateSurvey(&mut self, trial_id: i32, user_id: i32, name: String, description: String, date: String, image: String, reward: i32) {
+        pub fn CreateSurvey(&mut self, study_id: i32, user_id: i32, name: String, description: String, date: String, image: String, reward: i32) {
             let stuff = survey_struct {
                 survey_id: self._SurveyIds,
-                trial_id: trial_id,
+                study_id: study_id,
                 user_id: user_id,
                 name: name,
                 description: description,
@@ -297,12 +297,12 @@ mod wavedata {
         }
 
         #[ink(message)]
-        pub fn getAllSurveysIDByTrial(&mut self, trial_id: i32) -> Vec<i32> {
+        pub fn getAllSurveysIDByStudy(&mut self, study_id: i32) -> Vec<i32> {
             let mut result: Vec<i32> = Vec::new();
 
             for i in 0..(self._SurveyIds) {
                 let v = self._surveyMap.get(i).unwrap();
-                if format!("{}", v.trial_id) == format!("{}", trial_id) {
+                if format!("{}", v.study_id) == format!("{}", study_id) {
                     result.push(i);
                 }
             }
@@ -310,14 +310,14 @@ mod wavedata {
         }
 
         #[ink(message)]
-        pub fn UpdateTrial(&mut self, trial_id: i32, image: String, title: String, description: String, budget: i32) {
-            let mut trial = self._trialMap.get(trial_id).unwrap();
-            trial.image = image;
-            trial.title = title;
-            trial.description = description;
-            trial.budget = budget;
+        pub fn UpdateStudy(&mut self, study_id: i32, image: String, title: String, description: String, budget: i32) {
+            let mut study = self._studyMap.get(study_id).unwrap();
+            study.image = image;
+            study.title = title;
+            study.description = description;
+            study.budget = budget;
 
-            self._trialMap.insert(trial_id, &trial);
+            self._studyMap.insert(study_id, &study);
         }
 
         #[ink(message)]
@@ -332,18 +332,18 @@ mod wavedata {
         }
 
         #[ink(message)]
-        pub fn UpdateReward(&mut self, trial_id: i32, reward_type: String, reward_price: i32, total_spending_limit: i32) {
-            let mut stuff = self._trialMap.get(trial_id).unwrap();
+        pub fn UpdateReward(&mut self, study_id: i32, reward_type: String, reward_price: i32, total_spending_limit: i32) {
+            let mut stuff = self._studyMap.get(study_id).unwrap();
             stuff.reward_type = reward_type;
             stuff.reward_price = reward_price;
             stuff.total_spending_limit = total_spending_limit;
 
-            self._trialMap.insert(trial_id, &stuff);
+            self._studyMap.insert(study_id, &stuff);
         }
 
         #[ink(message)]
-        pub fn UpdateAudience(&mut self, trial_id: i32, audience_info: String) {
-            self._trialAudienceMap.insert(trial_id, &audience_info);
+        pub fn UpdateAudience(&mut self, study_id: i32, audience_info: String) {
+            self._studyAudienceMap.insert(study_id, &audience_info);
         }
 
         #[ink(message)]
@@ -375,47 +375,47 @@ mod wavedata {
             self._FhirIds += 1;
         }
 
-        // endregion: Trial
+        // endregion: Study
 
-        // region: OngoingTrial
+        // region: OngoingStudy
         #[ink(message)]
-        pub fn CreateOngoingTrail(&mut self, trial_id: i32, user_id: i32, date: String, given_permission: String) {
+        pub fn CreateOngoingTrail(&mut self, study_id: i32, user_id: i32, date: String, given_permission: String) {
             let stuff = ongoing_struct {
                 ongoing_id: self._OngoingIds,
-                trial_id: trial_id,
+                study_id: study_id,
                 user_id: user_id,
                 date: date,
                 given_permission: given_permission,
             };
 
-            let mut trial = self._trialMap.get(trial_id).unwrap();
-            trial.contributors  += 1;
-            self._trialMap.insert(trial_id, &trial);
+            let mut study = self._studyMap.get(study_id).unwrap();
+            study.contributors  += 1;
+            self._studyMap.insert(study_id, &study);
 
             self._ongoingMap.insert(self._OngoingIds, &stuff);
             self._OngoingIds += 1;
         }
 
         #[ink(message)]
-        pub fn GetOngoingTrial(&mut self, user_id: i32) -> String {
+        pub fn GetOngoingStudy(&mut self, user_id: i32) -> String {
             for i in 0..(self._OngoingIds) {
                 let v = self._ongoingMap.get(i).unwrap();
                 if format!("{}", v.user_id) == format!("{}", user_id) {
-                    return format!("{}", v.trial_id);
+                    return format!("{}", v.study_id);
                 }
             }
 
             return format!("{}", "False");
         }
 
-        // endregion: OngoingTrial
+        // endregion: OngoingStudy
 
         // region: FromApp
         #[ink(message)]
-        pub fn CreateQuestionAnswer(&mut self, trial_id: i32, user_id: i32, survey_id: i32, section_id: String, question_id: String, answer: String) {
+        pub fn CreateQuestionAnswer(&mut self, study_id: i32, user_id: i32, survey_id: i32, section_id: String, question_id: String, answer: String) {
             let stuff = survey_question_answer_struct {
                 answer_id: self._AnsweredIds,
-                trial_id: trial_id,
+                study_id: study_id,
                 user_id: user_id,
                 survey_id: survey_id,
                 section_id: section_id,
@@ -427,10 +427,10 @@ mod wavedata {
         }
 
         #[ink(message)]
-        pub fn CreateCompletedSurveys(&mut self, survey_id: i32, user_id: i32, date: String, trial_id: i32) {
+        pub fn CreateCompletedSurveys(&mut self, survey_id: i32, user_id: i32, date: String, study_id: i32) {
             let stuff = completed_survey_struct {
                 completed_survey_id: self._CompletedSurveyIds,
-                trial_id: trial_id,
+                study_id: study_id,
                 user_id: user_id,
                 survey_id: survey_id,
                 date: date.clone(),
@@ -466,8 +466,8 @@ mod wavedata {
             return self._UserIds;
         }
         #[ink(message)]
-        pub fn _TrialIds(&mut self) -> i32 {
-            return self._TrialIds;
+        pub fn _StudyIds(&mut self) -> i32 {
+            return self._StudyIds;
         }
         #[ink(message)]
         pub fn _SurveyIds(&mut self) -> i32 {
@@ -490,13 +490,13 @@ mod wavedata {
             return self._userMap.get(id).unwrap();
         }
         #[ink(message)]
-        pub fn _trialMap(&mut self, id: i32) -> trial_struct {
-            return self._trialMap.get(id).unwrap();
+        pub fn _studyMap(&mut self, id: i32) -> study_struct {
+            return self._studyMap.get(id).unwrap();
         }
 
         #[ink(message)]
-        pub fn _trialAudienceMap(&mut self, id: i32) -> String {
-            return self._trialAudienceMap.get(id).unwrap();
+        pub fn _studyAudienceMap(&mut self, id: i32) -> String {
+            return self._studyAudienceMap.get(id).unwrap();
         }
 
         #[ink(message)]
@@ -539,20 +539,20 @@ mod wavedata {
 
         // region: Delete
         #[ink(message)]
-        pub fn delete_a_trial(&mut self, trial_id: i32) {
-            self._trialMap.remove(trial_id);
-            self._trialAudienceMap.remove(trial_id);
+        pub fn delete_a_study(&mut self, study_id: i32) {
+            self._studyMap.remove(study_id);
+            self._studyAudienceMap.remove(study_id);
 
             for i in 0..(self._SurveyIds) {
                 let v = self._surveyMap.get(i).unwrap();
-                if format!("{}", v.trial_id) == format!("{}", trial_id) {
+                if format!("{}", v.study_id) == format!("{}", study_id) {
                     self.delete_a_servey(i);
                 }
             }
 
             for i in 0..(self._OngoingIds) {
                 let v = self._ongoingMap.get(i).unwrap();
-                if format!("{}", v.trial_id) == format!("{}", trial_id) {
+                if format!("{}", v.study_id) == format!("{}", study_id) {
                     self._ongoingMap.remove(i);
                 }
             }
@@ -581,7 +581,7 @@ mod wavedata {
         pub fn reset_all(&mut self) {
             self._UserIds = 0;
             self._FhirIds= 0;
-            self._TrialIds = 0;
+            self._StudyIds = 0;
             self._SurveyIds = 0;
             self._SurveyCategoryIds = 0;
             self._OngoingIds = 0;
@@ -590,8 +590,8 @@ mod wavedata {
 
             //Variables
             self._userMap = Mapping::new();
-            self._trialMap = Mapping::new();
-            self._trialAudienceMap = Mapping::new();
+            self._studyMap = Mapping::new();
+            self._studyAudienceMap = Mapping::new();
             self._surveyMap = Mapping::new();
             self._categoryMap = Mapping::new();
             self._sectionsMap = Mapping::new();
@@ -663,12 +663,12 @@ mod wavedata {
         }
 
         #[ink::test]
-        fn Trial_Surveys() {
+        fn Study_Surveys() {
             let mut wavedata = Wavedata::new();
-            // *----------------Trial------------------*
-            wavedata.CreateTrial(0, String::from("image"), String::from("title"), String::from("description"), String::from("permission"), 0, 0, 0);
-            wavedata.CreateTrial(2, String::from("image"), String::from("title"), String::from("description"), String::from("permission"), 0, 0, 0);
-            assert_eq!(wavedata._TrialIds, 2);
+            // *----------------Study------------------*
+            wavedata.CreateStudy(0, String::from("image"), String::from("title"), String::from("description"), String::from("permission"), 0, 0, 0);
+            wavedata.CreateStudy(2, String::from("image"), String::from("title"), String::from("description"), String::from("permission"), 0, 0, 0);
+            assert_eq!(wavedata._StudyIds, 2);
 
             // *----------------Survey------------------*
             wavedata.CreateSurvey(0, 0, String::from("name"), String::from("description"), String::from("date"), String::from("image"), 0);
@@ -676,12 +676,12 @@ mod wavedata {
             wavedata.CreateSurvey(1, 0, String::from("name2"), String::from("description2"), String::from("date2"), String::from("image2"), 220);
             assert_eq!(wavedata._SurveyIds, 3);
 
-            let found_surveys = wavedata.getAllSurveysIDByTrial(0);
+            let found_surveys = wavedata.getAllSurveysIDByStudy(0);
             assert_eq!(found_surveys.len(), 2);
 
             // *----------------Delete------------------*
-            wavedata.delete_a_trial(0);
-            assert_eq!(wavedata._trialMap.get(0), None);
+            wavedata.delete_a_study(0);
+            assert_eq!(wavedata._studyMap.get(0), None);
         }
     }
 }

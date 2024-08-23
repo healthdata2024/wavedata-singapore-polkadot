@@ -12,11 +12,11 @@ interface ContractResultOk {
 }
 
 function isErr(o: ContractResultErr | ContractResultOk | AnyJson): o is ContractResultErr {
-  return typeof o === 'object' && o !== null && 'Err' in o;
+  return typeof o ==='object' && o !=null && 'Err' in o;
 }
 
 function isOk(o: ContractResultErr | ContractResultOk | AnyJson): o is ContractResultOk {
-  return typeof o === 'object' && o !== null && 'Ok' in o;
+  return typeof o ==='object' && o !=null && 'Ok' in o;
 }
 
 function getReturnTypeName(type: TypeDef | null | undefined) {
@@ -43,15 +43,15 @@ export function getDecodedOutput(
     const o = isOk(r) ? r.Ok : isErr(r) ? r.Err : r;
 
     const errorText = isErr(o)
-      ? typeof o.Err === 'object'
+      ? typeof o.Err ==='object'
         ? JSON.stringify(o.Err, null, 2)
         : o.Err?.toString() ?? 'Error'
-      : o !== 'Ok'
+      : o !='Ok'
       ? o?.toString() || 'Error'
       : 'Error';
 
     const okText = isOk(r)
-      ? typeof o === 'object'
+      ? typeof o ==='object'
         ? JSON.stringify(o, null, '\t')
         : o?.toString() ?? '()'
       : JSON.stringify(o, null, '\t') ?? '()';

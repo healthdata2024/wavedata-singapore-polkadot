@@ -1,25 +1,26 @@
 import Cookies from "js-cookie";
-import {useNavigate, useLocation} from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {useState, useEffect} from "react";
-import useContract from "../services/useContract";
 import logoicon from "../assets/wave-data-logo.svg";
 import {web3Enable, isWeb3Injected, web3Accounts} from "@polkadot/extension-dapp";
+import useContract from "../services/useContract";
 
 import "./Login.css";
+
+
 function Login() {
 	let navigate = useNavigate();
 	const {api, contract, signerAddress, sendTransaction, ReadContractByQuery, getMessage, getQuery} = useContract();
 	const [isPolkadotConnected, setisPolkadotConnected] = useState(false);
-	const [isApiready, setisApiready] = useState(false);
 
 	window.onload = (e) => {
-		if (Cookies.get("login") === "true") {
-			navigate("/trials", {replace: true});
+		if (Cookies.get("login") ==="true") {
+			navigate("/studies", { replace: true });
 		}
 	};
 
 	function registerLink() {
-		navigate("/register", {replace: true});
+		navigate("/register", { replace: true });
 	}
 
 	async function onClickConnect(type) {
@@ -54,7 +55,7 @@ function Login() {
 
 		var emailTXT = document.getElementById("email");
 		var passwordTXT = document.getElementById("password");
-		if (emailTXT.value === "" || passwordTXT.value === "") {
+		if (emailTXT.value ==="" || passwordTXT.value ==="") {
 			FailedNotification.innerText = "Email and Password must be filled!";
 			FailedNotification.style.display = "block";
 			buttonTextBox.style.display = "block";
@@ -64,7 +65,7 @@ function Login() {
 		try {
 			const result = await ReadContractByQuery(api, signerAddress, getQuery("CheckEmail"), [emailTXT.value]);
 
-			if (result?.toString() === "False") {
+			if (result?.toString() ==="False") {
 				FailedNotification.innerText = "Email is not valid";
 				FailedNotification.style.display = "block";
 				buttonTextBox.style.display = "block";
@@ -73,7 +74,7 @@ function Login() {
 			}
 			let userid = await ReadContractByQuery(api, signerAddress, getQuery("Login"), [emailTXT.value, passwordTXT.value]);
 
-			if (userid !== "False") {
+			if (userid !="False") {
 				LoadingICON.style.display = "none";
 				buttonTextBox.style.display = "block";
 				SuccessNotification.innerText = "Success!";
@@ -81,7 +82,7 @@ function Login() {
 				//Login success
 				Cookies.set("login", "true");
 				Cookies.set("userid", userid);
-				navigate("/trials", {replace: true});
+				navigate("/studies", { replace: true });
 				return;
 			} else {
 				LoadingICON.style.display = "none";
@@ -98,6 +99,7 @@ function Login() {
 		}
 		event.target.disabled = false;
 	}
+
 	useEffect(() => {
 		async function check() {
 			var buttonTextBox = document.getElementById("buttonText");
@@ -125,17 +127,17 @@ function Login() {
 	return (
 		<div className="min-h-screen grid-cols-2 flex">
 			<div className="bg-blue-200 flex-1 img-panel">
-				<img src={require("../assets/login-picture.png")} className="h-full w-full" alt="WaveData Logo" />
+				<img src={require("../assets/login-picture.png")} className="h-full w-full object-cover object-left" alt="WaveData Logo" />
 			</div>
 			<div className="bg-white flex-1 flex flex-col justify-center items-center">
 				<div className="pl-20 pr-20 relative container-panel">
-					<img src={logoicon} className="w-3/4 mx-auto" alt="WaveData Logo" />
+					<img src={logoicon} className="w-3/4 mx-auto" style={{ height: '18rem' }} alt="WaveData Logo" />
 					<h1 className="text-4xl font-semibold mt-10 text-center">Your data is the cure.</h1>
 					<p className="mt-3">By sharing data people can help finding the cure and be part of the solution.</p>
-					<div id="notification-success" style={{display: "none"}} className="mt-4 text-center bg-gray-200 relative text-gray-500 py-3 px-3 rounded-lg">
+					<div id="notification-success" style={{ display: "none" }} className="mt-4 text-center bg-gray-200 relative text-gray-500 py-3 px-3 rounded-lg">
 						Success!
 					</div>
-					<div id="notification-error" style={{display: "none"}} className="mt-4 text-center bg-red-200 relative text-red-600 py-3 px-3 rounded-lg">
+					<div id="notification-error" style={{ display: "none" }} className="mt-4 text-center bg-red-200 relative text-red-600 py-3 px-3 rounded-lg">
 						Error! Please try again!
 					</div>
 					<div className="mt-10">

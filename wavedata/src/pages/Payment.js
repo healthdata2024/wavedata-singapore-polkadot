@@ -1,4 +1,4 @@
-import {useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import useContract from "../services/useContract";
 import Cookies from 'js-cookie'
 function Payment() {
@@ -20,13 +20,13 @@ function Payment() {
 		dynamicWidth: window.innerWidth,
 		dynamicHeight: window.innerHeight
 	});
-   async function fetchData(){
-      if (contract){
-         let userid = Cookies.get("userid");	
-		 let userdetails = await ReadContractByQuery(api,signerAddress, getQuery("getUserDetails"),[Number(userid)]);
-         setprivatekey(userdetails[4].substring(0,10) + "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-      }
-   }
+	async function fetchData() {
+		if (contract) {
+			let userid = Cookies.get("userid");
+			let userdetails = await ReadContractByQuery(api,signerAddress, getQuery("getUserDetails"),[Number(userid)]);
+			setprivatekey(userdetails[4].substring(0,10) + "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+		}
+	}
 
 	useEffect(async () => {
 		const setDimension = () => {
@@ -37,41 +37,42 @@ function Payment() {
 		};
 
 		window.addEventListener("resize", setDimension);
-      fetchData();
+		fetchData();
 	}, [contract]);
 
 	async function UpdatePayments(e) {
 		e.preventDefault();
-		const {privatekey,SaveBTN} = e.target;
-      SaveBTN.children[0].classList.remove("hidden")
-      SaveBTN.children[1].innerText = ""
-      SaveBTN.disabled = true;
+		const { privatekey, SaveBTN } = e.target;
+		SaveBTN.children[0].classList.remove("hidden")
+		SaveBTN.children[1].innerText = ""
+		SaveBTN.disabled = true;
 
 
-      try {
-         let userid = Cookies.get("userid");
+		try {
+			let userid = Cookies.get("userid");
 		 
-		 await sendTransaction(api,signerAddress, "UpdatePrivatekey",[parseInt(userid), privatekey.value]);
-           
-         SaveBTN.children[0].classList.add("hidden")
-         SaveBTN.children[1].innerText = "Save"
+			await sendTransaction(api,signerAddress, "UpdatePrivatekey",[parseInt(userid), privatekey.value]);
+			  
+			SaveBTN.children[0].classList.add("hidden")
+			SaveBTN.children[1].innerText = "Save"
+   
+			SaveBTN.disabled = false;
+			window.location.reload();
+			
 
-         SaveBTN.disabled = false;
-         window.location.reload();
-
-     } catch (error) {
-     }
-     SaveBTN.children[0].classList.add("hidden")
-     SaveBTN.children[1].innerText = "Save";
-     SaveBTN.disabled = false;
+		} catch (error) {
+		}
+		SaveBTN.children[0].classList.add("hidden")
+		SaveBTN.children[1].innerText = "Save";
+		SaveBTN.disabled = false;
 	}
 
 	return (
 		<>
 			<div className="bg-white border border-gray-400 rounded-lg flex mt-4 px-4">
-				{TABS.map(({id, title}, index) => {
-					const IS_LAST = index === TABS.length - 1;
-					const ACTIVE = index === tabIndex;
+				{TABS.map(({ id, title }, index) => {
+					const IS_LAST = index ===TABS.length - 1;
+					const ACTIVE = index ===tabIndex;
 
 					return (
 						<>
@@ -84,7 +85,7 @@ function Payment() {
 					);
 				})}
 			</div>
-			{tabIndex === 0 && (
+			{tabIndex ===0 && (
 				<div className="bg-white border border-gray-400 rounded-lg py-4 px-6 flex flex-col mt-4">
 					<h2 className="m-0">Transactions</h2>
 					<table className="table-responsive-xl">
@@ -99,7 +100,7 @@ function Payment() {
 					</table>
 				</div>
 			)}
-			{tabIndex === 1 && (
+			{tabIndex ===1 && (
 				<form method="POST" onSubmit={UpdatePayments} className="bg-white border border-gray-400 rounded-lg py-4 px-6 flex flex-col mt-4">
 					<h2 className="mb-3">Payment</h2>
 					<div className="mb-2 ">
@@ -108,7 +109,7 @@ function Payment() {
 							<input
 								type="text"
 								autoComplete="off"
-                        defaultValue={privatekey}
+								defaultValue={privatekey}
 								name="privatekey"
 								className="mt-1 h-10 border border-gray-200 rounded-md outline-none px-2 focus:border-gray-400 "
 								placeholder="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
