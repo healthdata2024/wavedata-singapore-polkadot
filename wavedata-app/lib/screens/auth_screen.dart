@@ -10,6 +10,8 @@ import 'package:wavedata/components/register_modal.dart';
 import 'package:wavedata/screens/get_ready.dart';
 import 'package:wavedata/screens/main_screen.dart';
 
+import 'package:url_launcher/url_launcher.dart';
+
 class AuthScreen extends StatefulWidget {
   @override
   AuthScreenApp createState() => AuthScreenApp();
@@ -44,33 +46,41 @@ class AuthScreenApp extends State<AuthScreen> {
   }
 
   Future<void> LoginAccount() async {
-    var url = Uri.parse(
-        'https://wavedata-polkadot-singapore-api.onrender.com/api/POST/Login');
-    final response = await http.post(url,
-        headers: POSTheader,
-        body: {'email': emailTXT.text, 'password': passwordTXT.text});
-    var responseData = json.decode(response.body);
-    var data = (responseData['value']);
-    if (data != "False") {
-      var userid = data;
-      // Obtain shared preferences.
-      final prefs = await SharedPreferences.getInstance();
+      const url = 'https://wavedata-singapore-polkadot-app.vercel.app/#/';
+      if(await canLaunch(url)){
+        await launch(url);
+      }else {
+        throw 'Could not launch $url';
+      }
 
-      prefs.setString("userid", userid);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => GetReadyScreen(),
-        ),
-      );
-      print(prefs.getString("userid"));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Email/password is incorrect!")));
-    }
 
-    setState(() => isLoading = false);
-    return;
+    // var url = Uri.parse(
+    //     'https://wavedata-polkadot-singapore-api.onrender.com/api/POST/Login');
+    // final response = await http.post(url,
+    //     headers: POSTheader,
+    //     body: {'email': emailTXT.text, 'password': passwordTXT.text});
+    // var responseData = json.decode(response.body);
+    // var data = (responseData['value']);
+    // if (data != "False") {
+    //   var userid = data;
+    //   // Obtain shared preferences.
+    //   final prefs = await SharedPreferences.getInstance();
+
+    //   prefs.setString("userid", userid);
+    //   Navigator.pushReplacement(
+    //     context,
+    //     MaterialPageRoute(
+    //       builder: (context) => GetReadyScreen(),
+    //     ),
+    //   );
+    //   print(prefs.getString("userid"));
+    // } else {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //       const SnackBar(content: Text("Email/password is incorrect!")));
+    // }
+
+    // setState(() => isLoading = false);
+    // return;
   }
 
   @override
