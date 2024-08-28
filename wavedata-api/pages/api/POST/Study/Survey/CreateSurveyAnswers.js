@@ -22,9 +22,9 @@ export default async function handler(req, res) {
   
   for (let i = 0; i < alldata.length; i++) {
     const item = alldata[i];
-    const { trialid,userid,surveyid, sectionid,questionid ,answer  } = item;
+    const { studyid,userid,surveyid, sectionid,questionid ,answer  } = item;
   
-    await sendTransaction(api,contract,signerAddress, "CreateQuestionAnswer",[Number(trialid),Number(userid),Number(surveyid),sectionid,questionid ,answer]);
+    await sendTransaction(api,contract,signerAddress, "CreateQuestionAnswer",[Number(studyid),Number(userid),Number(surveyid),sectionid,questionid ,answer]);
     await sleep(1000);
   }
 

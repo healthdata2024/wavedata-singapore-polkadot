@@ -10,7 +10,7 @@ export default async function handler(req, res) {
 	let survey_element = await ReadContractByQuery(api, signerAddress, getQuery(contract, "_surveyMap"), [Number(req.query.surveyid)]);
 	var new_survey = {
 		id: Number(survey_element.surveyId),
-		trial_id: Number(survey_element.trialId),
+		study_id: Number(survey_element.trialId),
 		user_id: Number(survey_element.userId),
 		name: survey_element.name,
 		description: survey_element.description,

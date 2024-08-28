@@ -17,7 +17,6 @@ export default async function handler(req, res) {
     const { userid, image } = req.body;
     let details_element = await ReadContractByQuery(api, signerAddress, getQuery(contract,"getUserDetails"), [Number(userid)]);
   
-    console.log(details_element);
 	
     await sendTransaction(api,contract,signerAddress, "UpdateUser",[Number(userid), image, Number(details_element[1])]);
     res.status(200).json({ status: 200, value: "Updated!" })

@@ -14,19 +14,20 @@ export default async function handler(req, res) {
 	}
   const headers = {
 		"accept": "application/fhir+json",
-		"x-api-key": "Qi8TXQVe1C2zxiYOdKKm7RQk6qz0h7n19zu1RMg5"
+		"x-api-key": "FLD8rH3oH574iF4tmRdLo4hUBWEzooD23yr3RxTd"
 	};
 
 	const {userid, givenname, identifier, patientid} = req.body;
-	let patient_details = await (await fetch(`https://fhir.8zhm32ja7p0e.workload-prod-fhiraas.isccloud.io/Patient/${Number(patientid)}`, {headers})).json();
-	let diagnostic_details = await (await fetch(`https://fhir.8zhm32ja7p0e.workload-prod-fhiraas.isccloud.io/DiagnosticReport?patient=${Number(patientid)}`, {headers})).json();
+	let patient_details = await (await fetch(`https://fhir.kecqr0ds8j10.workload-prod-fhiraas.isccloud.io/Patient/${Number(patientid)}`, {headers})).json();
+	let diagnostic_details = await (await fetch(`https://fhir.kecqr0ds8j10.workload-prod-fhiraas.isccloud.io/DiagnosticReport?patient=${Number(patientid)}`, {headers})).json();
 	let allDiagnostic = await diagnostic_details.entry;
 
 	
 	let DiseasesDiagnostic = allDiagnostic[allDiagnostic.length - 1]["resource"]["presentedForm"][0]["data"];
 	
 	let decodedDisease = useContract.base64DecodeUnicode(DiseasesDiagnostic);
-	await sendTransaction(api,contract,signerAddress, "UpdateFhir",[Number(userid), patient_details["name"][0]['family'], givenname, identifier, patient_details["telecom"][0]["value"].toString(), patient_details["gender"], decodedDisease, patientid]);
+	await sendTransaction(api,contract,signerAddress, "UpdateFhir",[Number(userid), patient_details["name"][0]['family'], givenname, identifier, patient_details["telecom"][0]["value"].toString(), patient_details["gender"], patient_details["birthDate"], decodedDisease, patientid]);
 
-	res.status(200).json({status: 200, value: "Updated!"});
+
+	res.status(200).json({status: 200, value: "Updated!",bodies: [Number(userid), patient_details["name"][0]['family'], givenname, identifier, patient_details["telecom"][0]["value"].toString(), patient_details["gender"], patient_details["birthDate"], decodedDisease, patientid]});
 }

@@ -292,9 +292,9 @@ function StudyDetails() {
 
 
 				var new_subject = {
-					subject_id: Number(subject_element.subject_id),
-					study_id: Number(subject_element.study_id),
-					subject_index_id: (subject_element.subject_index_id),
+					subject_id: Number(subject_element.subjectId),
+					study_id: Number(subject_element.studyId),
+					subject_index_id: (subject_element.subjectIndexId),
 					title: subject_element.title,
 					ages_ans:  JSON.parse(subject_element.ages_ans),
 				};

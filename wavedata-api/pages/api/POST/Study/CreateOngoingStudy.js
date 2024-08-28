@@ -14,9 +14,9 @@ export default async function handler(req, res) {
       return;
     }
   
-    const { trialid,userid,given_permission } = req.body;
+    const { studyid,userid,given_permission } = req.body;
  
-    await sendTransaction(api,contract,signerAddress, "CreateOngoingTrail",[Number(trialid),Number(userid),(new Date()).toISOString(),given_permission ]);
+    await sendTransaction(api,contract,signerAddress, "CreateOngoingStudy",[Number(studyid),Number(userid),(new Date()).toISOString(),given_permission ]);
            
     res.status(200).json({ status: 200, value: "Created" })
   
