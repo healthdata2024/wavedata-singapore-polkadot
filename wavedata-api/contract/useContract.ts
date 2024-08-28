@@ -18,7 +18,7 @@ export default async function useContract() {
 	};
 
 	const WS_PROVIDER = "wss://rpc.shibuya.astar.network"; // shibuya
-	const CONTRACT_ADDRESS = "bZdK8cHsc6SXqJ3xzn4T6t4sNXvBkrxJavDKJdwL2oKwSXm"
+	const CONTRACT_ADDRESS = "X7GNfYMrkNqZyQq3fja73k8QN1bu5mp1bPLsuq6BVPtzbnh"
 	
 
 	try {
