@@ -115,6 +115,7 @@ export default function useContract() {
 	}
 
 	async function ReadContractByQuery(api, signerAddress, query, args = null) {
+		if (api === null) return;
 		if (args) {
 			const { gasRequired, result, output } = await query(
 				signerAddress,
