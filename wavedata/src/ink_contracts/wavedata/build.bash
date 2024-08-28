@@ -1,5 +1,5 @@
 #!/bin/bash
-cargo contract build;
+cargo contract build --release;
 
 seedfile() {
    mkdir -p "$(dirname "$1")"
