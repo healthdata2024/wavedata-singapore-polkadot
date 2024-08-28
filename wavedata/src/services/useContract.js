@@ -1,17 +1,16 @@
-import {useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 
-import {ApiPromise, Keyring, WsProvider} from "@polkadot/api";
-import abiData from "../ink_contracts/wavedata/target/ink/metadata.json";
-import {options} from "@astar-network/astar-api";
-import {getDecodedOutput} from "./helpers";
+import { ApiPromise, Keyring, WsProvider } from "@polkadot/api";
+import { options } from "@astar-network/astar-api";
+import { getDecodedOutput } from "./helpers";
 
 import getContract from "./getContract";
-import {web3Enable, isWeb3Injected, web3Accounts} from "@polkadot/extension-dapp";
+import { web3Enable, isWeb3Injected, web3Accounts } from "@polkadot/extension-dapp";
 
 
 
-const WS_PROVIDER = "wss://shibuya-rpc.dwellir.com"; // shibuya
-const CONTRACT_ADDRESS=  ""
+const WS_PROVIDER = "wss://rpc.shibuya.astar.network"; // shibuya
+const CONTRACT_ADDRESS = "YPh92B2p659spnB4ASZqkiz8gFiwdDoT7g8gGWxkMXsUcgJ"
 export default function useContract() {
 	const [contractInstance, setContractInstance] = useState({
 		api: null,
@@ -26,14 +25,14 @@ export default function useContract() {
 		currentChain: null
 	});
 
-	
+
 	useEffect(() => {
 		const fetchData = async () => {
 			if (window.localStorage.getItem("type") === "polkadot") {
 				try {
 					const provider = new WsProvider(WS_PROVIDER);
-					const api = new ApiPromise(options({provider}));
-					
+					const api = new ApiPromise(options({ provider }));
+
 					await api.isReady;
 					const extension = await web3Enable("WaveData");
 					const injectedAccounts = await web3Accounts();
@@ -68,39 +67,31 @@ export default function useContract() {
 		fetchData();
 	}, []);
 
+
 	async function sendTransaction(api, signerAddress, method, args = []) {
 		let tx = getTX(method);
-		let query  = getQuery(method);
+		let query = getQuery(method);
 		let gasLimit;
-		if (args.length>0) {
-			const {gasRequired, result, output} = await query(
+		if (args.length > 0) {
+			const { gasRequired, result, output } = await query(
 				signerAddress,
 				{
-					gasLimit: api.registry.createType("WeightV2", {
-						refTime: 6219235328,
-						proofSize: 131072
-					}),
-					storageDepositLimit: null
+					gasLimit: api.registry.createType("WeightV2", api.consts.system.blockWeights['maxBlock']),
 				},
 				...args
 			);
 			gasLimit = api.registry.createType("WeightV2", gasRequired);
 		} else {
-			const {gasRequired, result, output} = await query(signerAddress, {
-				gasLimit: api.registry.createType("WeightV2", {
-					refTime: 6219235328,
-					proofSize: 131072
-				}),
-				storageDepositLimit: null
+			const { gasRequired, result, output } = await query(signerAddress, {
+				gasLimit: api.registry.createType("WeightV2", api.consts.system.blockWeights['maxBlock']),
 			});
 			gasLimit = api.registry.createType("WeightV2", gasRequired);
 		}
-		
-		const sendTX =	new Promise(function executor(resolve) {
-			 tx({
-					gasLimit: gasLimit,
-					storageDepositLimit: null
-				},
+
+		const sendTX = new Promise(function executor(resolve) {
+			tx({
+				gasLimit: gasLimit
+			},
 				...args)
 				.signAndSend(signerAddress, async (res) => {
 					if (res.status.isInBlock) {
@@ -112,11 +103,11 @@ export default function useContract() {
 				});
 		});
 		await sendTX;
-		
+
 	}
 
 	async function ReadContractValue(api, signerAddress, msg, msgWithArgs) {
-		const result = await api.call.contractsApi.call(signerAddress,CONTRACT_ADDRESS, 0, null, null, msg.toU8a(msgWithArgs));
+		const result = await api.call.contractsApi.call(signerAddress, CONTRACT_ADDRESS, 0, null, null, msg.toU8a(msgWithArgs));
 
 		const decodedOutput = getDecodedOutput(result, msg, api.registry).decodedOutput;
 
@@ -125,24 +116,18 @@ export default function useContract() {
 
 	async function ReadContractByQuery(api, signerAddress, query, args = null) {
 		if (args) {
-			const {gasRequired, result, output} = await query(
+			const { gasRequired, result, output } = await query(
 				signerAddress,
 				{
-					gasLimit: api.registry.createType("WeightV2", {
-						refTime: 6219235328,
-						proofSize: 131072
-					}),
+					gasLimit: api.registry.createType("WeightV2", api.consts.system.blockWeights['maxBlock']),
 					storageDepositLimit: null
 				},
 				...args
 			);
 			return output.toHuman().Ok;
 		} else {
-			const {gasRequired, result, output} = await query(signerAddress, {
-				gasLimit: api.registry.createType("WeightV2", {
-					refTime: 6219235328,
-					proofSize: 131072
-				}),
+			const { gasRequired, result, output } = await query(signerAddress, {
+				gasLimit: api.registry.createType("WeightV2", api.consts.system.blockWeights['maxBlock']),
 				storageDepositLimit: null
 			});
 			return output.toHuman().Ok;

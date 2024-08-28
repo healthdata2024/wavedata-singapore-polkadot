@@ -6,5 +6,5 @@ seedfile() {
    touch "$1"
 }
 
-seedfile ../../../../wavedata-api/contract/ink_contracts/metadata.json;
-cp ./target/ink/metadata.json ../../../../wavedata-api/contract/ink_contracts/metadata.json;
+seedfile ../../../../wavedata-api/contract/ink_contracts/wavedata.json;
+cp ./target/ink/wavedata.json ../../../../wavedata-api/contract/ink_contracts/wavedata.json;
