@@ -34,7 +34,7 @@ class _CreditScreenState extends ConsumerState<CreditScreen> {
   };
 
   int userid = 0;
-String domain = 'https://wavedata-singapore-polkadot.onrender.com';
+String domain = 'http://127.0.0.1:3000';
 
   var userDetails = {
     "userid": -1,

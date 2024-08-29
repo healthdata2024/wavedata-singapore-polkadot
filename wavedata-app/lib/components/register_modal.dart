@@ -23,7 +23,7 @@ class RegisterApp extends State<RegisterModal> {
   TextEditingController passwordTXT = new TextEditingController();
   TextEditingController ConPassTXT = new TextEditingController();
   bool isLoading = false;
-  String baseURL=  'https://wavedata-singapore-polkadot.onrender.com';
+  String baseURL=  'http://127.0.0.1:3000';
   var POSTheader = {
     "Accept": "application/json",
     "Content-Type": "application/x-www-form-urlencoded"
