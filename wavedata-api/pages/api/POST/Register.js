@@ -14,7 +14,7 @@ export default async function handler(req, res) {
 		res.status(405).json({status: 405, error: "Register must have POST request"});
 		return;
 	}
-	const {fullname, email, password} = req.body;
+	const {fullname, email,birth_date, password} = req.body;
 	const result = await ReadContractByQuery(api,signerAddress, getQuery(contract,"CheckEmail"),[email])
     
 	if (result !== "False") {
@@ -23,7 +23,7 @@ export default async function handler(req, res) {
 	}
 	let accessToken =""
 	
-	await sendTransaction(api,contract,signerAddress, "CreateAccount",[fullname, email, password, accessToken,signerAddress]);
+	await sendTransaction(api,contract,signerAddress, "CreateAccount",[fullname, email, password, accessToken,"",birth_date]);
 	res.status(200).json({status: 200, value: "Registered!"});
 }
 

@@ -1,16 +1,22 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:wavedata/components/signature_modal.dart';
+import 'package:wavedata/screens/connect_data.dart';
+import 'package:wavedata/screens/informedconsent_screen.dart';
+import 'package:wavedata/screens/onboarding_questionnaire_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wavedata/components/data_edit_item.dart';
 import 'package:wavedata/components/register_modal.dart';
 import 'package:wavedata/screens/get_ready.dart';
+import 'package:wavedata/screens/study_id_screen.dart';
 import 'package:wavedata/screens/main_screen.dart';
-
-import 'package:url_launcher/url_launcher.dart';
+import 'package:wavedata/model/airtable_api.dart';
+import 'package:signature/signature.dart';
 
 class AuthScreen extends StatefulWidget {
   @override
@@ -25,6 +31,9 @@ class AuthScreenApp extends State<AuthScreen> {
     "Accept": "application/json",
     "Content-Type": "application/x-www-form-urlencoded"
   };
+ String baseURL=  'https://wavedata-singapore-polkadot.onrender.com';
+ 
+
   @override
   initState() {
     GetAccount();
@@ -34,53 +43,55 @@ class AuthScreenApp extends State<AuthScreen> {
   Future<void> GetAccount() async {
     // Obtain shared preferences.
     final prefs = await SharedPreferences.getInstance();
-    print(prefs.getString("userid"));
     if (prefs.getString("userid") != "" && prefs.getString("userid") != null) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => MainScreen(),
+          builder: (context) => OnboardingQuestionnaireScreen(),
         ),
       );
     }
   }
 
   Future<void> LoginAccount() async {
-      const url = 'https://wavedata-singapore-polkadot-app.vercel.app/#/';
-      if(await canLaunch(url)){
-        await launch(url);
-      }else {
-        throw 'Could not launch $url';
-      }
+ 
+     if (emailTXT.text == "" || passwordTXT.text == ""){
+      ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                    content:
+                        Text("Please fill all fields!")));
+          setState(() => isLoading = true);
+          return;
+     }
 
+     var url = Uri.parse('${baseURL}/api/POST/Login');
+    final response = await http.post(url,
+        headers: POSTheader,
+        body: {'email': emailTXT.text, 'password': passwordTXT.text});
+    var responseData = json.decode(response.body);
+    var data = (responseData['value']);
+    if (data != "False") {
+      var userid = data;
+      // Obtain shared preferences.
+      
+      final prefs = await SharedPreferences.getInstance();
+ 
+      prefs.setString("userid", userid);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => GetStudyIDScreen(),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Email/password is incorrect!")));
+    }
 
-    // var url = Uri.parse(
-    //     'https://wavedata-polkadot-singapore-api.onrender.com/api/POST/Login');
-    // final response = await http.post(url,
-    //     headers: POSTheader,
-    //     body: {'email': emailTXT.text, 'password': passwordTXT.text});
-    // var responseData = json.decode(response.body);
-    // var data = (responseData['value']);
-    // if (data != "False") {
-    //   var userid = data;
-    //   // Obtain shared preferences.
-    //   final prefs = await SharedPreferences.getInstance();
+    setState(() => isLoading = false);
+    return;
 
-    //   prefs.setString("userid", userid);
-    //   Navigator.pushReplacement(
-    //     context,
-    //     MaterialPageRoute(
-    //       builder: (context) => GetReadyScreen(),
-    //     ),
-    //   );
-    //   print(prefs.getString("userid"));
-    // } else {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //       const SnackBar(content: Text("Email/password is incorrect!")));
-    // }
-
-    // setState(() => isLoading = false);
-    // return;
+   
   }
 
   @override
@@ -98,32 +109,61 @@ class AuthScreenApp extends State<AuthScreen> {
           ),
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              margin: EdgeInsets.only(left: 16, right: 16, bottom: 64),
+              margin: EdgeInsets.only(left: 16, top: 20, right: 16, bottom: 20),
               child: Material(
                 elevation: 5,
                 borderRadius: BorderRadius.circular(8),
                 child: Container(
-                  height: size.height / 1.4,
+                  height: size.height / 1.1,
                   constraints: const BoxConstraints(
                     minHeight: 500,
                   ),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.white),
                   child: Column(
                     children: [
                       Container(
-                        margin: EdgeInsets.only(top: 60, bottom: 30),
+                        margin: EdgeInsets.only(bottom: 10),
                         child: SvgPicture.asset(
                           "assets/images/Logo.svg",
+                          height: 150,
+                          width: 150,
+                        ),
+                      ),
+                      Column(children: [
+                        Text("I own my data,",
+                            style: GoogleFonts.getFont('Lexend Deca',
+                                color: Color(0xFFF06129),
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700)),
+                        Text("my data is my own",
+                            style: GoogleFonts.getFont('Lexend Deca',
+                                color: Color(0xFFF06129),
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700))
+                      ]),
+                      Container(
+                        width: size.width,
+                        height: 260,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(8),
+                              topRight: Radius.circular(8)),
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image:
+                                Image.asset("assets/images/login-picture.png")
+                                    .image,
+                          ),
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(left: 24, right: 24),
+                        margin: EdgeInsets.only(top: 24, left: 24, right: 24),
                         child:
                             DataEditItem(label: "Email", controller: emailTXT),
                       ),
@@ -139,12 +179,7 @@ class AuthScreenApp extends State<AuthScreen> {
                         child: GestureDetector(
                           onTap: () async {
                             if (isLoading) return;
-                            if (emailTXT.text == "" || passwordTXT.text == "")
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content:
-                                          Text("Please fill all fields!")));
-                            setState(() => isLoading = true);
+                           
                             await LoginAccount();
                           },
                           child: Material(

@@ -25,7 +25,7 @@ export default async function handler(req, res) {
 		age:currentAge,
 		about: fhir_element.about,
 		patient_id: fhir_element.patientId,
-		privatekey: userdetails[4] + "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+		walletaddress: userdetails[4] ,
 		image: fhir_element.image,
 		credits: fhir_element.credits
 	};

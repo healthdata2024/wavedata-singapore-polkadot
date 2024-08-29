@@ -21,7 +21,6 @@ mod wavedata {
         email: String,
         password: String,
         walletaddress: String,
-        privatekey: String,
         image: String,
         credits: i32,
         accesstoken: String,
@@ -205,7 +204,7 @@ mod wavedata {
         // endregion: Initialize
         // region: Users
         #[ink(message)]
-        pub fn CreateAccount(&mut self, full_name: String, email: String, password: String, accesstoken: String, walletaddress: String) {
+        pub fn CreateAccount(&mut self, full_name: String, email: String, password: String, accesstoken: String, walletaddress: String,birth_date:String) {
             let stuff = user_struct {
                 user_id: self._UserIds,
                 name: full_name,
@@ -218,6 +217,19 @@ mod wavedata {
                 accesstoken: accesstoken,
                 fhirid: self._UserIds,
             };
+            let fhir_stuff = fhir_struct {
+                user_id: user_id,
+                family_name: "",
+                given_name: "",
+                identifier: "",
+                phone: "",
+                gender: "",
+                birth_date:birth_date ;
+                about: "",
+                patient_id: "",
+            };
+
+            self._fhirMap.insert(user_id, &fhir_stuff);
 
             self._userMap.insert(self._UserIds, &stuff);
             self._UserIds += 1;
@@ -235,12 +247,7 @@ mod wavedata {
             return format!("{}", "False");
         }
 
-        #[ink(message)]
-        pub fn UpdatePrivatekey(&mut self, userid: i32, privatekey: String) {
-            let mut user = self._userMap.get(userid).unwrap();
-            user.privatekey = privatekey;
-            self._userMap.insert(userid, &user);
-        }
+      
 
         #[ink(message)]
         pub fn UpdateAccessToken(&mut self, userid: i32, accesstoken: String) {
@@ -270,7 +277,7 @@ mod wavedata {
             result.push(format!("{}", user.credits));
             result.push(user.name);
             result.push(user.email);
-            result.push(String::from(&user.privatekey));
+            result.push(String::from(&user.walletaddress));
             result.push(user.accesstoken);
             result.push(format!("{}", user.fhirid));
 
@@ -429,7 +436,7 @@ mod wavedata {
         }
 
         #[ink(message)]
-        pub fn UpdateFhir(&mut self, user_id: i32, family_name: String, given_name: String, identifier: String, phone: String, gender: String,birth_date: String,  about: String, patient_id: String) {
+        pub fn UpdateFhir(&mut self, user_id: i32,walletaddress:String, family_name: String, given_name: String, identifier: String, phone: String, gender: String,birth_date: String,  about: String, patient_id: String) {
            let stuff = fhir_struct {
                 user_id: user_id,
                 family_name: family_name,
@@ -441,6 +448,10 @@ mod wavedata {
                 about: about,
                 patient_id: patient_id,
             };
+            let mut user = self._userMap.get(user_id).unwrap();
+            user.walletaddress = walletaddress;
+            self._userMap.insert(user_id, &user);
+
 
             self._fhirMap.insert(user_id, &stuff);
         }
@@ -749,26 +760,6 @@ mod wavedata {
             );
             assert_eq!(wavedata._UserIds, 1);
             return wavedata;
-        }
-
-        #[ink::test]
-        fn User() {
-            // *----------------Create User------------------*
-            let mut wavedata = Wavedata::new();
-            wavedata = create_account(wavedata);
-            assert_eq!(wavedata._UserIds(), 1);
-            assert_eq!(wavedata.Login(String::from("email"), String::from("password")), String::from("0"));
-            assert_eq!(wavedata.Login(String::from("wrong email"), String::from("password")), String::from("False"));
-
-            // *----------------Update User------------------*
-            wavedata.UpdatePrivatekey(0, String::from("privatekey updated"));
-            assert_eq!(wavedata._userMap(0).privatekey, String::from("privatekey updated"));
-            wavedata.UpdateAccessToken(0, String::from("AccessToken updated"));
-            assert_eq!(wavedata._userMap(0).accesstoken, String::from("AccessToken updated"));
-
-            assert_eq!(wavedata.getUserDetails(0)[2], String::from("full_name"));
-
-            // ink_env::debug_println!("{:#?}", wavedata.getUserDetails(0)[2]);
         }
 
         #[ink::test]

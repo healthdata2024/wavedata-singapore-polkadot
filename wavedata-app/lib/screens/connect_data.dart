@@ -1,49 +1,76 @@
 // ignore_for_file: use_key_in_widget_constructors, non_constant_identifier_names, unnecessary_new, sized_box_for_whitespace, prefer_const_constructors
 
 import 'dart:convert';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
 import 'package:flutter/material.dart';
+import 'package:wavedata/providers/feeling_provider.dart';
+import 'package:wavedata/screens/onboarding_questionnaire_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wavedata/components/data_edit_item.dart';
+import 'package:wavedata/components/data_edit_dropdown.dart';
 import 'package:wavedata/screens/main_screen.dart';
+import 'package:wavedata/model/airtable_api.dart';
 import 'package:http/http.dart' as http;
 
-class ConnectDataScreen extends StatefulWidget {
+class ConnectDataScreen extends ConsumerStatefulWidget {
+  const ConnectDataScreen({Key? key}) : super(key: key);
+
   @override
-  ConnectDataApp createState() => ConnectDataApp();
+  ConsumerState<ConnectDataScreen> createState() => _ConnectDataScreenState();
 }
 
-class ConnectDataApp extends State<ConnectDataScreen> {
+class _ConnectDataScreenState extends ConsumerState<ConnectDataScreen> {
   TextEditingController GivenNameTXT = new TextEditingController();
   TextEditingController IdentifierTXT = new TextEditingController();
   TextEditingController FHIRIDTXT = new TextEditingController();
-  TextEditingController PrivateKeyTXT = new TextEditingController();
+  TextEditingController WalletAddressTXT = new TextEditingController(text: "");
 
   bool isLoading = false;
-  var POSTheader = {
+ var POSTheader = {
     "Accept": "application/json",
     "Content-Type": "application/x-www-form-urlencoded"
   };
-  bool termsBool = false;
-
+   String baseURL=  'https://wavedata-singapore-polkadot.onrender.com';
+ 
   @override
   initState() {
     GetData();
     super.initState();
   }
+  Future<void> GetData() async {
+    final prefs = await SharedPreferences.getInstance();
+    var userid = prefs.getString("userid");
+    var url = Uri.parse(
+        '${baseURL}/api/GET/getFhir?userid=${int.parse(userid.toString())}');
 
+    final response = await http.get(url);
+    var responseData = json.decode(response.body);
+    if (responseData['value'] != null) {
+      var data = (responseData['value']);
+      setState(() {
+        GivenNameTXT.text = data['given_name'];
+        IdentifierTXT.text = data['identifier'];
+        FHIRIDTXT.text = data['patient_id'].toString();
+        WalletAddressTXT.text = data['walletaddress'].toString();
+      });
+    }
+  }
+
+  
   Future<void> ConnectData() async {
     final prefs = await SharedPreferences.getInstance();
     var userid = prefs.getString("userid");
     try {
-      var url = Uri.parse(
-          'https://wavedata-polkadot-singapore-api.onrender.com/api/POST/UpadateFhir');
+      var url = Uri.parse('${baseURL}/api/POST/UpadateFhir');
       final response = await http.post(url, headers: POSTheader, body: {
         'userid': userid,
         'givenname': GivenNameTXT.text,
         'identifier': IdentifierTXT.text,
-        'patientid': FHIRIDTXT.text
+        'patientid': FHIRIDTXT.text,
+        'walletaddress': WalletAddressTXT.text,
       });
       var responseData = json.decode(response.body);
       if (responseData['status'] == 200) {
@@ -63,29 +90,69 @@ class ConnectDataApp extends State<ConnectDataScreen> {
     return;
   }
 
-  Future<void> GetData() async {
-    final prefs = await SharedPreferences.getInstance();
-    var userid = prefs.getString("userid");
-    var url = Uri.parse(
-        'https://wavedata-polkadot-singapore-api.onrender.com/api/GET/getFhir?userid=${int.parse(userid.toString())}');
-
-    final response = await http.get(url);
-    var responseData = json.decode(response.body);
-    if (responseData['value'] != null) {
-      var data = (responseData['value']);
-      setState(() {
-        GivenNameTXT.text = data['given_name'];
-        IdentifierTXT.text = data['identifier'];
-        FHIRIDTXT.text = data['patient_id'].toString();
-        PrivateKeyTXT.text = data['privatekey'].toString();
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
+    var feelingViewmodel = ref.watch(feelingProvider);
+
+    Future<void> UpdateData() async {
+      setState(() => isLoading = true);
+
+      final prefs = await SharedPreferences.getInstance();
+      var userid = prefs.getString("userid");
+      try {
+        final UsersDataTable = base('users_data');
+
+        await UsersDataTable.create({
+          "user_id": userid,
+          "givenname": GivenNameTXT.text,
+          "familyname": FamilyNameTXT.text,
+          "gender": SexTXT.text,
+          "phone": PhoneTXT.text,
+        });
+        final UsersTable = base('users');
+        await UsersTable.update(userid!, {"image": ImageTXT.text});
+      } catch (e) {}
+      setState(() => isLoading = false);
+       Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => OnboardingQuestionnaireScreen(),
+        )
+      );
+
+    }
+
+    void UpdateImage() async {
+      setState(() {
+        ImageTXT.text = ImageTXT.text;
+      });
+      Navigator.pop(context);
+    }
+
+    imagePickerOption(BuildContext context) async {
+      return showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Image url'),
+              content: TextField(
+                controller: ImageTXT,
+                decoration: const InputDecoration(
+                    hintText: "https://image.com/example.png"),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('SUBMIT'),
+                  onPressed: UpdateImage,
+                )
+              ],
+            );
+          });
+    }
+
+    
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -134,7 +201,7 @@ class ConnectDataApp extends State<ConnectDataScreen> {
               Container(
                 margin: const EdgeInsets.only(left: 24, right: 24),
                 child: DataEditItem(
-                    label: "Private key", controller: PrivateKeyTXT),
+                    label: "Wallet Address", controller: WalletAddressTXT),
               ),
               Container(
                 margin: const EdgeInsets.only(left: 12, right: 24),
