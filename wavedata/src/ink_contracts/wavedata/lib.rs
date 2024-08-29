@@ -193,6 +193,7 @@ mod wavedata {
                 _ongoingMap: Mapping::new(),
                 _questionanswerdMap: Mapping::new(),
                 _completedsurveyMap: Mapping::new(),
+                _completedinformedMap: Mapping::new(),
             }
         }
 
@@ -210,7 +211,6 @@ mod wavedata {
                 name: full_name,
                 email: email,
                 password: password,
-                privatekey: format!("{}", ""),
                 walletaddress: walletaddress,
                 image: format!("{}", "https://i.postimg.cc/SsxGw5cZ/person.jpg"),
                 credits: 0,
@@ -218,18 +218,18 @@ mod wavedata {
                 fhirid: self._UserIds,
             };
             let fhir_stuff = fhir_struct {
-                user_id: user_id,
-                family_name: "",
-                given_name: "",
-                identifier: "",
-                phone: "",
-                gender: "",
-                birth_date:birth_date ;
-                about: "",
-                patient_id: "",
+                user_id: self._UserIds,
+                family_name: format!("{}",""),
+                given_name:  format!("{}",""),
+                identifier:  format!("{}",""),
+                phone:  format!("{}",""),
+                gender:  format!("{}",""),
+                birth_date:birth_date,
+                about:  format!("{}",""),
+                patient_id:  format!("{}",""),
             };
 
-            self._fhirMap.insert(user_id, &fhir_stuff);
+            self._fhirMap.insert(self._UserIds, &fhir_stuff);
 
             self._userMap.insert(self._UserIds, &stuff);
             self._UserIds += 1;
@@ -444,7 +444,7 @@ mod wavedata {
                 identifier: identifier,
                 phone: phone,
                 gender: gender,
-                birth_date:birth_date ;
+                birth_date:birth_date,
                 about: about,
                 patient_id: patient_id,
             };
@@ -541,7 +541,7 @@ mod wavedata {
         #[ink(message)]
         pub fn CreateCompletedInformedConsent(&mut self,  user_id: i32, date: String, study_id: i32) {
             let stuff = completed_informed_consent_struct {
-                completed_survey_id: self._CompletedSurveyIds,
+                completed_informed_consent_id: self._CompletedSurveyIds,
                 study_id: study_id,
                 user_id: user_id,
                 date: date.clone()

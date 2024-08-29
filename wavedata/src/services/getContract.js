@@ -4,7 +4,7 @@ import { Abi, ContractPromise } from '@polkadot/api-contract'
 import abiData from '../ink_contracts/wavedata/target/ink/wavedata.json';
 
 
-const CONTRACT_ADDRESS = 'X7GNfYMrkNqZyQq3fja73k8QN1bu5mp1bPLsuq6BVPtzbnh'//smart contract deployed address 
+const CONTRACT_ADDRESS = 'WJN1LKFi6q4GdU3FMBW8pyJCVzDmtL5vXBWyBn16ShWZWqc'//smart contract deployed address 
 	
 export default async function getContract(api) {
 
