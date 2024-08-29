@@ -33,6 +33,7 @@ class _ConnectDataScreenState extends ConsumerState<ConnectDataScreen> {
     "Accept": "application/json",
     "Content-Type": "application/x-www-form-urlencoded"
   };
+  bool termsBool = false;
    String baseURL=  'https://wavedata-singapore-polkadot.onrender.com';
  
   @override
@@ -96,63 +97,7 @@ class _ConnectDataScreenState extends ConsumerState<ConnectDataScreen> {
 
     var feelingViewmodel = ref.watch(feelingProvider);
 
-    Future<void> UpdateData() async {
-      setState(() => isLoading = true);
 
-      final prefs = await SharedPreferences.getInstance();
-      var userid = prefs.getString("userid");
-      try {
-        final UsersDataTable = base('users_data');
-
-        await UsersDataTable.create({
-          "user_id": userid,
-          "givenname": GivenNameTXT.text,
-          "familyname": FamilyNameTXT.text,
-          "gender": SexTXT.text,
-          "phone": PhoneTXT.text,
-        });
-        final UsersTable = base('users');
-        await UsersTable.update(userid!, {"image": ImageTXT.text});
-      } catch (e) {}
-      setState(() => isLoading = false);
-       Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => OnboardingQuestionnaireScreen(),
-        )
-      );
-
-    }
-
-    void UpdateImage() async {
-      setState(() {
-        ImageTXT.text = ImageTXT.text;
-      });
-      Navigator.pop(context);
-    }
-
-    imagePickerOption(BuildContext context) async {
-      return showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text('Image url'),
-              content: TextField(
-                controller: ImageTXT,
-                decoration: const InputDecoration(
-                    hintText: "https://image.com/example.png"),
-              ),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text('SUBMIT'),
-                  onPressed: UpdateImage,
-                )
-              ],
-            );
-          });
-    }
-
-    
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(

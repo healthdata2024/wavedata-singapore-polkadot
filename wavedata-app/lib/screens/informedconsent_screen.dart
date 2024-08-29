@@ -36,13 +36,12 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
     "Accept": "application/json",
     "Content-Type": "application/x-www-form-urlencoded"
   };
- String baseURL=  'https://wavedata-singapore-polkadot.onrender.com';
- 
+  String baseURL = 'https://wavedata-singapore-polkadot.onrender.com';
 
   var ages_groups = [];
   var study_title = "";
   List<Subject> subjects = [];
-  String study_id ="-1";
+  String study_id = "-1";
   String UserName = "";
   bool isloading = true;
   Map<String, dynamic> StudyDetails = {};
@@ -53,7 +52,7 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
 
   Future<void> GetData() async {
     final prefs = await SharedPreferences.getInstance();
-     studyid = prefs.getString("studyid").toString();
+    String studyid = prefs.getString("studyid").toString();
     String userid = prefs.getString("userid").toString();
 
     ages_groups = [];
@@ -74,31 +73,27 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
     }).toList();
     var studytitle = (value['study_title'].toString());
 
-
-      setState(() {
-        ages_groups = dataAge;
-        subjects = dataSubjects;
-        study_title = studytitle;
-        isloading = false;
-        study_id = studyid;
-        StudyDetails = value;
-      });
-    }
-
-    print("Done!");
+    setState(() {
+      ages_groups = dataAge;
+      subjects = dataSubjects;
+      study_title = studytitle;
+      isloading = false;
+      study_id = studyid;
+      StudyDetails = value;
+    });
   }
 
   Future<void> FinishIC() async {
     setState(() {
       isloading = true;
     });
-    
+
     final prefs = await SharedPreferences.getInstance();
     String userid = (prefs.getString("userid").toString());
     String studyid = (study_id);
 
-   var url = Uri.parse(
-        '${baseURL}/api/POST/Study/CreateCompletedInformedConsent');
+    var url =
+        Uri.parse('${baseURL}/api/POST/Study/CreateCompletedInformedConsent');
     await http.post(url, headers: POSTheader, body: {
       'userid': userid.toString(),
       'date': DateTime.now().toIso8601String(),
@@ -119,8 +114,7 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
 
     String JsonMadePermission = given_permission.toString();
 
-    var url2 =
-        Uri.parse('${baseURL}/api/POST/Study/CreateOngoingStudy');
+    var url2 = Uri.parse('${baseURL}/api/POST/Study/CreateOngoingStudy');
     await http.post(url2, headers: POSTheader, body: {
       'studyid': studyid.toString(),
       'userid': userid.toString(),
@@ -137,7 +131,6 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
     setState(() {
       isloading = false;
     });
-  
   }
 
   @override

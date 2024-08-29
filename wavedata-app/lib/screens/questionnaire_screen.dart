@@ -46,7 +46,7 @@ String domain = 'https://wavedata-singapore-polkadot.onrender.com';
     allCategory = [];
 
 var url = Uri.parse(
-        '${domain}/api/GET/Study/Survey/GetSurveyDetails?surveyid=${surveyid}');
+        '${domain}/api/GET/Study/Survey/GetSurveyDetails?surveyid=${SurveyId}');
     final response = await http.get(url);
     var responseData = json.decode(response.body);
 
@@ -141,6 +141,11 @@ var url = Uri.parse(
     setState(() {
       isloading = true;
     });
+    final prefs = await SharedPreferences.getInstance();
+       String surveyid = prefs.getString("surveyid").toString();
+    int userid = int.parse(prefs.getString("userid").toString());
+    int studyid = int.parse(allSections[0]['studyid']);
+
 
     var url = Uri.parse(
         '${domain}/api/POST/Study/Survey/CreateCompletedSurvey');

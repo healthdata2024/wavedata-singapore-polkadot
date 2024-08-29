@@ -98,7 +98,7 @@ class AuthScreenApp extends State<AuthScreen> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
-    return Scaffold(
+   return Scaffold(
       body: Container(
         height: size.height,
         width: size.width,
@@ -109,61 +109,32 @@ class AuthScreenApp extends State<AuthScreen> {
           ),
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Container(
-              margin: EdgeInsets.only(left: 16, top: 20, right: 16, bottom: 20),
+              margin: EdgeInsets.only(left: 16, right: 16, bottom: 64),
               child: Material(
                 elevation: 5,
                 borderRadius: BorderRadius.circular(8),
                 child: Container(
-                  height: size.height / 1.1,
+                  height: size.height / 1.4,
                   constraints: const BoxConstraints(
                     minHeight: 500,
                   ),
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: Colors.white),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   child: Column(
                     children: [
                       Container(
-                        margin: EdgeInsets.only(bottom: 10),
+                        margin: EdgeInsets.only(top: 60, bottom: 30),
                         child: SvgPicture.asset(
                           "assets/images/Logo.svg",
-                          height: 150,
-                          width: 150,
-                        ),
-                      ),
-                      Column(children: [
-                        Text("I own my data,",
-                            style: GoogleFonts.getFont('Lexend Deca',
-                                color: Color(0xFFF06129),
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700)),
-                        Text("my data is my own",
-                            style: GoogleFonts.getFont('Lexend Deca',
-                                color: Color(0xFFF06129),
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700))
-                      ]),
-                      Container(
-                        width: size.width,
-                        height: 260,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(8),
-                              topRight: Radius.circular(8)),
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image:
-                                Image.asset("assets/images/login-picture.png")
-                                    .image,
-                          ),
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(top: 24, left: 24, right: 24),
+                        margin: EdgeInsets.only(left: 24, right: 24),
                         child:
                             DataEditItem(label: "Email", controller: emailTXT),
                       ),
@@ -179,7 +150,12 @@ class AuthScreenApp extends State<AuthScreen> {
                         child: GestureDetector(
                           onTap: () async {
                             if (isLoading) return;
-                           
+                            if (emailTXT.text == "" || passwordTXT.text == "")
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content:
+                                          Text("Please fill all fields!")));
+                            setState(() => isLoading = true);
                             await LoginAccount();
                           },
                           child: Material(

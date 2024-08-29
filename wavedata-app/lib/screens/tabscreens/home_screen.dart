@@ -82,7 +82,7 @@ var url = Uri.parse(
     var allStudies = json.decode(data);
     allStudies.forEach((element) => {
           setState(() {
-            avilableStudies.add(Trial(
+            avilableStudies.add(Study(
                 id: element['id'],
                 title: element['title'],
                 image: element['image'],
@@ -273,16 +273,16 @@ dummyActions = [];
     }
 
        //FHIR switches
-    bool? FamilyNameSwitch;
-    bool? GivenNameSwitch;
-    bool? GenderSwitch;
-    bool? PhoneSwitch;
-    bool? AboutSwitch;
+    bool FamilyNameSwitch = false;
+    bool GivenNameSwitch = false;
+    bool GenderSwitch = false;
+    bool PhoneSwitch = false;
+    bool AboutSwitch = false;
     //Wearable switches
-    bool? BloodSwitch;
-    bool? SleepSwitch;
-    bool? StepsSwitch;
-    bool? CaloriesSwitch;
+    bool BloodSwitch =false;
+    bool SleepSwitch =false;
+    bool StepsSwitch =false;
+    bool CaloriesSwitch =false;
 
     bool SetSwitches(int type, bool value, {int fhirtype = 0}) {
       if (fhirtype == 0) {
@@ -828,16 +828,16 @@ class _OngoingDialogState extends State<OngoingDialog> {
  
 
        //FHIR switches
-    bool? FamilyNameSwitch;
-    bool? GivenNameSwitch;
-    bool? GenderSwitch;
-    bool? PhoneSwitch;
-    bool? AboutSwitch;
+    bool FamilyNameSwitch =false;
+    bool GivenNameSwitch =false;
+    bool GenderSwitch =false;
+    bool PhoneSwitch =false;
+    bool AboutSwitch =false;
     //Wearable switches
-    bool? BloodSwitch;
-    bool? SleepSwitch;
-    bool? StepsSwitch;
-    bool? CaloriesSwitch;
+    bool BloodSwitch =false;
+    bool SleepSwitch =false;
+    bool StepsSwitch =false;
+    bool CaloriesSwitch =false;
 
   bool GetPermission(String type) {
     return jsonDecode(widget.permissions)[type];
