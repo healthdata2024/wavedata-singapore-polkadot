@@ -24,7 +24,7 @@ export default function UpdateSurveyModal({
         updateBTN.children[1].innerText = ""
         updateBTN.disabled = true;
         try {
-            await sendTransaction(api, signerAddress, "UpdateSurvey", [parseInt(id), name.value, description.value, image.value, Number(reward.value)]);
+            await sendTransaction(api, signerAddress, "UpdateSurvey", [parseInt(id), name.value, description.value, image.value, Number(reward.value) * 1e18]);
             notificationSuccess.style.display = "block";
             updateBTN.children[0].classList.add("hidden")
             updateBTN.children[1].innerText = "Update Survey"

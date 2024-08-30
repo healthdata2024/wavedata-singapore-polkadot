@@ -201,7 +201,7 @@ function StudyDetails() {
 		DisableButton("rewardsSave");
 
 		try {
-			await sendTransaction(api, signerAddress, "UpdateReward", [Number(parseInt(params.id)), rewardselect.value, Number(rewardprice.value), parseInt(totalspendlimit.value)]);
+			await sendTransaction(api, signerAddress, "UpdateReward", [Number(parseInt(params.id)), rewardselect.value, Number(rewardprice.value) * 1e18, parseInt(totalspendlimit.value)* 1e18]);
 		} catch (error) {
 			console.error(error);
 		}
@@ -271,10 +271,10 @@ function StudyDetails() {
 				description: study_element.description,
 				contributors: Number(study_element.contributors),
 				audience: Number(allAudiences.length),
-				budget: Number(study_element.budget),
+				budget: Number(study_element.budget)/ 1e18,
 				reward_type: study_element.rewardType,
-				reward_price: Number(study_element.rewardPrice),
-				total_spending_limit: Number(study_element.totalSpendingLimit)
+				reward_price: Number(study_element.rewardPrice)/ 1e18,
+				total_spending_limit: Number(study_element.totalSpendingLimit) / 1e18
 			};
 			setSTUDY_DATA(newStudy);
 		}

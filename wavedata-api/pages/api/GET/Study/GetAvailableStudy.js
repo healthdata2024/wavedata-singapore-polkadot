@@ -58,7 +58,7 @@ export default async function handler(req, res) {
       description: study_element.description,
       contributors: Number(study_element.contributors),
       audience: Number(study_element.audience),
-      budget: Number(study_element.budget),      
+      budget: Number(study_element.budget) /1e18,      
       permissions: (study_element.permission),
       study_title: study_title,
       subjects: draft_subjects,

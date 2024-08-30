@@ -1,5 +1,4 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
-
 #![allow(non_snake_case)]
 #![allow(non_camel_case_types)]
 #![allow(dead_code)]
@@ -22,7 +21,7 @@ mod wavedata {
         password: String,
         walletaddress: String,
         image: String,
-        credits: i32,
+        credits: u128,
         accesstoken: String,
         fhirid: i32,
     }
@@ -45,25 +44,23 @@ mod wavedata {
         permission: String,
         contributors: i32,
         audience: i32,
-        budget: i32,
+        budget: u128,
         reward_type: String,
-        reward_price: i32,
-        total_spending_limit: i32,
-        ages:String,
-        titles:String
+        reward_price: u128,
+        total_spending_limit: u128,
+        ages: String,
+        titles: String,
     }
 
     #[derive(Debug, PartialEq, Eq, Encode, Decode)]
     #[cfg_attr(feature = "std", derive(ink::storage::traits::StorageLayout, scale_info::TypeInfo))]
     pub struct study_subject_struct {
-        subject_id:i32,
+        subject_id: i32,
         study_id: i32,
         subject_index_id: String,
         title: String,
-        ages_ans: String
+        ages_ans: String,
     }
-
-    
 
     #[derive(Debug, PartialEq, Eq, Encode, Decode)]
     #[cfg_attr(feature = "std", derive(ink::storage::traits::StorageLayout, scale_info::TypeInfo))]
@@ -75,7 +72,7 @@ mod wavedata {
         description: String,
         date: String,
         image: String,
-        reward: i32,
+        reward: u128,
         submission: i32,
     }
 
@@ -150,6 +147,7 @@ mod wavedata {
         _AnsweredIds: i32,
         _CompletedSurveyIds: i32,
         _CompletedInformedConsentIds: i32,
+        _TotalAmounts:u128,
         //Variables Multiples
         _userMap: Mapping<i32, user_struct>,
         _studyMap: Mapping<i32, study_struct>,
@@ -181,6 +179,7 @@ mod wavedata {
                 _AnsweredIds: 0,
                 _CompletedSurveyIds: 0,
                 _CompletedInformedConsentIds: 0,
+                _TotalAmounts:0,
                 //Variables Multiples
                 _userMap: Mapping::new(),
                 _studyMap: Mapping::new(),
@@ -205,7 +204,7 @@ mod wavedata {
         // endregion: Initialize
         // region: Users
         #[ink(message)]
-        pub fn CreateAccount(&mut self, full_name: String, email: String, password: String, accesstoken: String, walletaddress: String,birth_date:String) {
+        pub fn CreateAccount(&mut self, full_name: String, email: String, password: String, accesstoken: String, walletaddress: String, birth_date: String) {
             let stuff = user_struct {
                 user_id: self._UserIds,
                 name: full_name,
@@ -219,14 +218,14 @@ mod wavedata {
             };
             let fhir_stuff = fhir_struct {
                 user_id: self._UserIds,
-                family_name: format!("{}",""),
-                given_name:  format!("{}",""),
-                identifier:  format!("{}",""),
-                phone:  format!("{}",""),
-                gender:  format!("{}",""),
-                birth_date:birth_date,
-                about:  format!("{}",""),
-                patient_id:  format!("{}",""),
+                family_name: format!("{}", ""),
+                given_name: format!("{}", ""),
+                identifier: format!("{}", ""),
+                phone: format!("{}", ""),
+                gender: format!("{}", ""),
+                birth_date: birth_date,
+                about: format!("{}", ""),
+                patient_id: format!("{}", ""),
             };
 
             self._fhirMap.insert(self._UserIds, &fhir_stuff);
@@ -246,8 +245,6 @@ mod wavedata {
 
             return format!("{}", "False");
         }
-
-      
 
         #[ink(message)]
         pub fn UpdateAccessToken(&mut self, userid: i32, accesstoken: String) {
@@ -288,7 +285,7 @@ mod wavedata {
 
         // region: Study
         #[ink(message)]
-        pub fn CreateStudy(&mut self, user_id: i32, image: String, title: String, description: String, permission: String, contributors: i32, audience: i32, budget: i32) {
+        pub fn CreateStudy(&mut self, user_id: i32, image: String, title: String, description: String, permission: String, contributors: i32, audience: i32, budget: u128) {
             let stuff = study_struct {
                 study_id: self._StudyIds,
                 user_id: user_id,
@@ -302,16 +299,16 @@ mod wavedata {
                 reward_type: format!("{}", "SBY"),
                 reward_price: 0,
                 total_spending_limit: budget,
-                ages:format!("{}", "[]"),
-                titles:format!("{}", "[]"),
+                ages: format!("{}", "[]"),
+                titles: format!("{}", "[]"),
             };
             self._studyMap.insert(self._StudyIds, &stuff);
-             self._StudyIds = self._StudyIds.clone() + 1;
+            self._StudyIds = self._StudyIds.clone() + 1;
         }
 
-
         #[ink(message)]
-        pub fn CreateSurvey(&mut self, study_id: i32, user_id: i32, name: String, description: String, date: String, image: String, reward: i32) {
+        #[ink(payable)]
+        pub fn CreateSurvey(&mut self, study_id: i32, user_id: i32, name: String, description: String, date: String, image: String, reward: u128) {
             let stuff = survey_struct {
                 survey_id: self._SurveyIds,
                 study_id: study_id,
@@ -323,8 +320,9 @@ mod wavedata {
                 reward: reward,
                 submission: 0,
             };
+            self._TotalAmounts += reward;
             self._surveyMap.insert(self._SurveyIds, &stuff);
-             self._SurveyIds = self._SurveyIds.clone() + 1;
+            self._SurveyIds = self._SurveyIds.clone() + 1;
         }
         #[ink(message)]
         pub fn CreateSubject(&mut self, study_id: i32, subject_index_id: String, title: String, ages_ans: String) {
@@ -333,10 +331,10 @@ mod wavedata {
                 study_id: study_id,
                 subject_index_id: subject_index_id,
                 title: title,
-                ages_ans: ages_ans
+                ages_ans: ages_ans,
             };
             self._studySubjectMap.insert(self._StudySubjectsIds, &stuff);
-             self._StudySubjectsIds = self._StudySubjectsIds.clone() +  1;
+            self._StudySubjectsIds = self._StudySubjectsIds.clone() + 1;
         }
 
         #[ink(message)]
@@ -347,7 +345,7 @@ mod wavedata {
 
             self._studySubjectMap.insert(subject_id, &stuff);
         }
-         
+
         #[ink(message)]
         pub fn CreateOrSaveStudyTitle(&mut self, studyId: i32, title_info: String) {
             let mut stuff = self._studyMap.get(studyId).unwrap();
@@ -363,7 +361,7 @@ mod wavedata {
         pub fn CreateSurveyCategory(&mut self, name: String, image: String) {
             let stuff = survey_category_struct { name: name, image: image };
             self._categoryMap.insert(self._SurveyCategoryIds, &stuff);
-             self._SurveyCategoryIds = self._SurveyCategoryIds.clone() + 1;
+            self._SurveyCategoryIds = self._SurveyCategoryIds.clone() + 1;
         }
 
         #[ink(message)]
@@ -380,7 +378,7 @@ mod wavedata {
         }
 
         #[ink(message)]
-        pub fn UpdateStudy(&mut self, study_id: i32, image: String, title: String, description: String, budget: i32) {
+        pub fn UpdateStudy(&mut self, study_id: i32, image: String, title: String, description: String, budget: u128) {
             let mut study = self._studyMap.get(study_id).unwrap();
             study.image = image;
             study.title = title;
@@ -398,10 +396,8 @@ mod wavedata {
             self._studyMap.insert(study_id, &study);
         }
 
-
-
         #[ink(message)]
-        pub fn UpdateSurvey(&mut self, survey_id: i32, name: String, description: String, image: String, reward: i32) {
+        pub fn UpdateSurvey(&mut self, survey_id: i32, name: String, description: String, image: String, reward: u128) {
             let mut survey = self._surveyMap.get(survey_id).unwrap();
             survey.name = name;
             survey.description = description;
@@ -412,7 +408,7 @@ mod wavedata {
         }
 
         #[ink(message)]
-        pub fn UpdateReward(&mut self, study_id: i32, reward_type: String, reward_price: i32, total_spending_limit: i32) {
+        pub fn UpdateReward(&mut self, study_id: i32, reward_type: String, reward_price: u128, total_spending_limit: u128) {
             let mut stuff = self._studyMap.get(study_id).unwrap();
             stuff.reward_type = reward_type;
             stuff.reward_price = reward_price;
@@ -427,7 +423,7 @@ mod wavedata {
         }
 
         #[ink(message)]
-        pub fn UpdateUser(&mut self, user_id: i32, image: String, credits: i32) {
+        pub fn UpdateUser(&mut self, user_id: i32, image: String, credits: u128) {
             let mut stuff = self._userMap.get(user_id).unwrap();
             stuff.image = image;
             stuff.credits = credits;
@@ -436,22 +432,33 @@ mod wavedata {
         }
 
         #[ink(message)]
-        pub fn UpdateFhir(&mut self, user_id: i32,walletaddress:String, family_name: String, given_name: String, identifier: String, phone: String, gender: String,birth_date: String,  about: String, patient_id: String) {
-           let stuff = fhir_struct {
+        pub fn UpdateFhir(
+            &mut self,
+            user_id: i32,
+            walletaddress: String,
+            family_name: String,
+            given_name: String,
+            identifier: String,
+            phone: String,
+            gender: String,
+            birth_date: String,
+            about: String,
+            patient_id: String,
+        ) {
+            let stuff = fhir_struct {
                 user_id: user_id,
                 family_name: family_name,
                 given_name: given_name,
                 identifier: identifier,
                 phone: phone,
                 gender: gender,
-                birth_date:birth_date,
+                birth_date: birth_date,
                 about: about,
                 patient_id: patient_id,
             };
             let mut user = self._userMap.get(user_id).unwrap();
             user.walletaddress = walletaddress;
             self._userMap.insert(user_id, &user);
-
 
             self._fhirMap.insert(user_id, &stuff);
         }
@@ -470,11 +477,11 @@ mod wavedata {
             };
 
             let mut study = self._studyMap.get(study_id).unwrap();
-             study.contributors =  study.contributors.clone() +  1;
+            study.contributors = study.contributors.clone() + 1;
             self._studyMap.insert(study_id, &study);
 
             self._ongoingMap.insert(self._OngoingIds, &stuff);
-             self._OngoingIds = self._OngoingIds.clone() +  1;
+            self._OngoingIds = self._OngoingIds.clone() + 1;
         }
 
         #[ink(message)]
@@ -504,7 +511,7 @@ mod wavedata {
                 answer: answer,
             };
             self._questionanswerdMap.insert(self._AnsweredIds, &stuff);
-             self._AnsweredIds =  self._AnsweredIds.clone() + 1;
+            self._AnsweredIds = self._AnsweredIds.clone() + 1;
         }
 
         #[ink(message)]
@@ -518,12 +525,12 @@ mod wavedata {
             };
 
             let mut survey = self._surveyMap.get(survey_id).unwrap();
-             survey.submission = survey.submission.clone() + 1;
+            survey.submission = survey.submission.clone() + 1;
             survey.date = date.clone();
             self._surveyMap.insert(survey_id, &survey);
 
             self._completedsurveyMap.insert(self._CompletedSurveyIds, &stuff);
-             self._CompletedSurveyIds =  self._CompletedSurveyIds.clone() +  1;
+            self._CompletedSurveyIds = self._CompletedSurveyIds.clone() + 1;
         }
 
         #[ink(message)]
@@ -539,30 +546,55 @@ mod wavedata {
             return result;
         }
         #[ink(message)]
-        pub fn CreateCompletedInformedConsent(&mut self,  user_id: i32, date: String, study_id: i32) {
+        pub fn CreateCompletedInformedConsent(&mut self, user_id: i32, date: String, study_id: i32) {
             let stuff = completed_informed_consent_struct {
                 completed_informed_consent_id: self._CompletedSurveyIds,
                 study_id: study_id,
                 user_id: user_id,
-                date: date.clone()
+                date: date.clone(),
             };
 
             self._completedinformedMap.insert(self._CompletedInformedConsentIds, &stuff);
-             self._CompletedInformedConsentIds =  self._CompletedInformedConsentIds.clone() +  1;
+            self._CompletedInformedConsentIds = self._CompletedInformedConsentIds.clone() + 1;
         }
 
         #[ink(message)]
         pub fn getCompletedInformedConsentId(&mut self, user_id: i32, study_id: i32) -> String {
-            
-
             for i in 0..(self._CompletedInformedConsentIds) {
                 let v = self._completedinformedMap.get(i).unwrap();
                 if format!("{}", v.user_id) == format!("{}", user_id) && format!("{}", v.study_id) == format!("{}", study_id) {
-                    return format!("{}",i);
+                    return format!("{}", i);
                 }
             }
             return format!("{}", "False");
         }
+
+        #[ink(message)]
+        pub fn WithDrawAmount(&mut self, user_id: i32, amount: u128, person:AccountId) {
+            assert!(self.env().transfer(person, amount).is_ok());
+
+            let mut user = self._userMap.get(user_id).unwrap();
+            user.credits -= amount;        
+
+            self._userMap.insert(user_id, &user);
+        }
+
+        
+        #[ink(message)]
+        pub fn getAmount(&self) -> u128 {
+            self._TotalAmounts
+        }
+
+   
+        #[ink(message)]
+        pub fn transfer(&mut self, _amount:u128, person:AccountId) {
+            assert!(self.env().transfer(person, _amount).is_ok());
+
+            ()
+
+        }
+
+        
         // endregion: FromApp
 
         // regiion: GetAllVariables
@@ -578,7 +610,7 @@ mod wavedata {
         pub fn _StudySubjectsIds(&mut self) -> i32 {
             return self._StudySubjectsIds;
         }
-        
+
         #[ink(message)]
         pub fn _SurveyIds(&mut self) -> i32 {
             return self._SurveyIds;
@@ -602,6 +634,10 @@ mod wavedata {
         #[ink(message)]
         pub fn _CompletedInformedConsentIds(&mut self) -> i32 {
             return self._CompletedInformedConsentIds;
+        }
+        #[ink(message)]
+        pub fn _TotalAmounts(&mut self) -> u128 {
+            return self._TotalAmounts;
         }
         #[ink(message)]
         pub fn _userMap(&mut self, id: i32) -> user_struct {
@@ -757,6 +793,7 @@ mod wavedata {
                 String::from("password"),
                 String::from("accesstoken"),
                 String::from("walletaddress"),
+                String::from("birth_date"),
             );
             assert_eq!(wavedata._UserIds, 1);
             return wavedata;

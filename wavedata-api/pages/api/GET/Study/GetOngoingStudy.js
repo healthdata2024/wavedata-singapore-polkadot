@@ -19,7 +19,7 @@ export default async function handler(req, res) {
       description: study_element.description,
       contributors: Number(study_element.contributors),
       audience: Number(study_element.audience),
-      budget: Number(study_element.totalSpendingLimit)
+      budget: Number(study_element.totalSpendingLimit) /1e18
     };
     let all_surveys = await ReadContractByQuery(api, signerAddress, getQuery(contract,"getAllSurveysIDByStudy"), [Number(study_id)]);
 

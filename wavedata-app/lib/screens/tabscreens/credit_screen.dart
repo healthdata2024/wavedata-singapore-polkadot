@@ -40,7 +40,8 @@ String domain = 'http://127.0.0.1:3000';
     "userid": -1,
     "credits": 0,
     "ongoingcredit": null,
-    "totalongoingcredit": null
+    "totalongoingcredit": null,
+    "walletAddress": "",
   };
 
 
@@ -134,7 +135,8 @@ String domain = 'http://127.0.0.1:3000';
     var dataUD = (responseData['value']);
 
     setState(() {
-      userDetails["credits"] = dataUD['credits'] / 1e6;
+      userDetails["credits"] = dataUD['credits'] / 1e18;
+      userDetails["walletAddress"] = dataUD['walletAddress'] ;
     });
 
    
@@ -218,7 +220,7 @@ String domain = 'http://127.0.0.1:3000';
           '${domain}/api/POST/Study/Survey/WithdrawAmount');
       await http.post(url,
           headers: POSTheader,
-          body: {'userid': userid.toString(), 'amount': Amount});
+          body: {'userid': userid.toString(), 'amount': Amount,'walletAddress':userDetails["walletAddress"]});
       await GetAccountData();
       Navigator.pop(context);
     }
