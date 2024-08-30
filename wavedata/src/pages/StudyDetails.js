@@ -15,7 +15,7 @@ function StudyDetails() {
 
 	const params = useParams();
 	const navigate = useNavigate();
-	const {CreateSubject,UpdateSubject} = useDBContext();
+	const {CreateSubject,UpdateSubject,base} = useDBContext();
 	const { api, contract, signerAddress, sendTransaction, ReadContractValue, ReadContractByQuery, getMessage, getQuery } = useContract();
 	const [tabIndex, setTabIndex] = useState(0);
 	const [UpdatemodalShow, setModalShow] = useState(false);
