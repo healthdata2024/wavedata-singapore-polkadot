@@ -1,4 +1,4 @@
-import {ethers} from "ethers";
+
 export async function GenerateAccessToken(fullname) {
 	return "daf69cba6bb256a687c8c73e229f54d3";
 }

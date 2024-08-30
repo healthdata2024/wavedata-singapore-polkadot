@@ -460,7 +460,7 @@ mod wavedata {
 
         // region: OngoingStudy
         #[ink(message)]
-        pub fn CreateOngoingTrail(&mut self, study_id: i32, user_id: i32, date: String, given_permission: String) {
+        pub fn CreateOngoingStudy(&mut self, study_id: i32, user_id: i32, date: String, given_permission: String) {
             let stuff = ongoing_struct {
                 ongoing_id: self._OngoingIds,
                 study_id: study_id,

@@ -63,11 +63,11 @@ export default async function handler(req, res) {
 
     //Load Subjects
 
-    const totalSubjects = await ReadContractByQuery(api, signerAddress, getQuery("_StudySubjectsIds"));
+    const totalSubjects = await ReadContractByQuery(api, signerAddress, getQuery(contract,"_StudySubjectsIds"));
     let draft_subjects = [];
     try {
         for (let i = 0; i < Number(totalSubjects); i++) {
-            let subject_element = await ReadContractByQuery(api, signerAddress, getQuery("_studySubjectMap"), [i]);
+            let subject_element = await ReadContractByQuery(api, signerAddress, getQuery(contract,"_studySubjectMap"), [i]);
             if (Number(study_element.studyId) === Number(subject_element.studyId)) {
                 let elligible_ages_ans = {};
                 if (eligible_age_group.length > 0) {
@@ -90,7 +90,7 @@ export default async function handler(req, res) {
 
 
     var newStudy = {
-        id: Number(study_element.study_id),
+        id: Number(study_id),
         title: study_element.title,
         image: study_element.image,
         description: study_element.description,

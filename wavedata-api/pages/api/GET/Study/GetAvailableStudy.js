@@ -29,11 +29,11 @@ export default async function handler(req, res) {
     }
 
 
-    const totalSubjects = await ReadContractByQuery(api, signerAddress, getQuery("_StudySubjectsIds"));
+    const totalSubjects = await ReadContractByQuery(api, signerAddress, getQuery(contract,"_StudySubjectsIds"));
 		let draft_subjects = [];
 		try {
 			for (let i = 0; i < Number(totalSubjects); i++) {
-				let subject_element = await ReadContractByQuery(api, signerAddress, getQuery("_studySubjectMap"), [i]);
+				let subject_element = await ReadContractByQuery(api, signerAddress, getQuery(contract,"_studySubjectMap"), [i]);
 
 
 				var new_subject = {

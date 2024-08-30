@@ -171,6 +171,7 @@ function StudyDetails() {
 
 	async function UpdateStudyTitleHandle() {
 		DisableButton("StudyTitleSave");
+		console.log("UpdateStudyTitleHandle");
 		await sendTransaction(api,signerAddress, "CreateOrSaveStudyTitle",[Number(params.id), JSON.stringify(studyTitle.ages_ans)]);
          
 		EnableButton("StudyTitleSave");
@@ -247,19 +248,17 @@ function StudyDetails() {
 		
 			let allAges = [];
 			try {
+				if (study_element.ages !== '[]')
 				allAges = JSON.parse(study_element.ages);
-			} catch (e) {
-				allAges = [];
-			}
+			} catch (e) {}
 			setAgesData(allAges)
 			
 
 			let allTitles = {ages_ans: {}};
 			try {
+				if (study_element.titles !== '[]')
 				allTitles.ages_ans = JSON.parse(study_element.titles);
-			} catch (e) {
-				allTitles = {ages_ans: {}};
-			}
+			} catch (e) {}
 		
 			setStudyTitle(allTitles)
 			
@@ -296,7 +295,7 @@ function StudyDetails() {
 					study_id: Number(subject_element.studyId),
 					subject_index_id: (subject_element.subjectIndexId),
 					title: subject_element.title,
-					ages_ans:  JSON.parse(subject_element.ages_ans),
+					ages_ans:  JSON.parse(subject_element.agesAns),
 				};
 				if (parseInt(params.id) === new_subject.study_id) {
 					draft_subjects.push(new_subject)

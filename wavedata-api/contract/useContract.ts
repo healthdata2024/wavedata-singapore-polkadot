@@ -86,6 +86,7 @@ async function sendTransaction(api,contract, signerAddress, method, args = null)
 }
 
 async function ReadContractByQuery(api, signerAddress, query, args = null) {
+	
 	if (args) {
 		const {gasRequired, result, output} = await query(
 			signerAddress,
@@ -114,6 +115,7 @@ async function ReadContractByQuery(api, signerAddress, query, args = null) {
 	}
 }
 function getMessage(contract, find_contract) {
+	
 	for (let i = 0; i < contract.abi.messages.length; i++) {
 		if (find_contract == contract.abi.messages[i]["identifier"]) {
 			return contract.abi.messages[i];
@@ -122,10 +124,12 @@ function getMessage(contract, find_contract) {
 }
 
 function getQuery(contract,find_contract) {
+	
 	let messageName = "";
 	for (let i = 0; i < contract.abi.messages.length; i++) {
 		if (find_contract == contract.abi.messages[i]["identifier"]) {
 			messageName = contract.abi.messages[i]["method"];
+
 			return contract.query[messageName];
 		}
 	}
