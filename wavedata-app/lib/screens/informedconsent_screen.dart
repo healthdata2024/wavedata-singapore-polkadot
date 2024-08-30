@@ -68,9 +68,36 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
       return Ages.fromMap((e as Map<String, dynamic>));
     }).toList();
 
-    List<Subject> dataSubjects = (value["subjects"] as List).map((e) {
-      return Subject.fromMap((e as Map<String, dynamic>));
-    }).toList();
+    final studySubjectsTable = base('study_subjects');
+      final filterByFormula = ' {study_id} = \'${studyid}\'';
+      var sort = [
+        {"field": "Order_ID", "direction": "asc"}
+      ];
+
+      final subjects_records = await studySubjectsTable.select(
+          filterBy: (filterByFormula), sortBy: sort);
+
+      List<Map<String, dynamic>> newSubjects = [];
+      for (var element in subjects_records) {
+        var subjectElement = element;
+        var age = dataAge[0];
+        var eligibleAgesAns = (dataAge.length > 0)
+            ? json.decode(subjectElement['ages_ans'])[age.id]
+            : {};
+
+        newSubjects.add({
+          'subject_id': subjectElement['subject_id'],
+          'study_id': subjectElement['study_id'],
+          'subject_index_id': subjectElement['subject_index_id'],
+          'title': subjectElement['title'],
+          'ages_ans': eligibleAgesAns,
+        });
+      }
+
+  List<Subject> dataSubjects = (newSubjects as List).map((e) {
+        return Subject.fromMap((e as Map<String, dynamic>));
+      }).toList();
+
     var studytitle = (value['study_title'].toString());
 
     setState(() {

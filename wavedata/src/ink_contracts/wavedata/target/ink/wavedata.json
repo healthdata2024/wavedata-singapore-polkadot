@@ -1,6 +1,6 @@
 {
   "source": {
-    "hash": "0xb1f42f7e6fb7db401f8f2db5a2822d920a69898f1a54316845e94f3fc0dbf783",
+    "hash": "0xaedbf8e4449bd9263858540322cc9fefeb5b89bc9bf9fff9ab3c6391993140f4",
     "language": "ink! 5.0.0",
     "compiler": "rustc 1.82.0-nightly",
     "build_info": {
@@ -1137,7 +1137,7 @@
         ],
         "default": false,
         "docs": [],
-        "label": "CreateOngoingTrail",
+        "label": "CreateOngoingStudy",
         "mutates": true,
         "payable": false,
         "returnType": {
@@ -1147,7 +1147,7 @@
           ],
           "type": 51
         },
-        "selector": "0x19a8c5bc"
+        "selector": "0x4cca34a4"
       },
       {
         "args": [
