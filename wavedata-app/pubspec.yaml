@@ -57,6 +57,7 @@ dependencies:
   signature: ^4.0.0
   flutter_hooks: ^0.18.6
   hooks_riverpod: ^1.0.3
+  url_launcher:
 
 dev_dependencies:
   flutter_test:

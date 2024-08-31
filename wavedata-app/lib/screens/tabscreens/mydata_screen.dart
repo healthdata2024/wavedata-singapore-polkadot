@@ -12,6 +12,8 @@ import 'package:wavedata/screens/qr_code_generated.dart';
 import 'package:wavedata/screens/wearables_screen.dart';
 import 'package:wavedata/screens/auth_screen.dart';
 
+import 'package:url_launcher/url_launcher.dart';
+
 class MyDataScreen extends ConsumerStatefulWidget {
   const MyDataScreen({Key? key}) : super(key: key);
 
@@ -36,7 +38,7 @@ class _MyDataScreenState extends ConsumerState<MyDataScreen> {
     "x-api-key": "Qi8TXQVe1C2zxiYOdKKm7RQk6qz0h7n19zu1RMg5"
   };
 
-String domain = 'http://127.0.0.1:3000';
+String domain = 'https://wavedata-singapore-polkadot.onrender.com';
 
   String userid = "";
   String StudyId = "";
@@ -334,6 +336,71 @@ String domain = 'http://127.0.0.1:3000';
                                                 builder: (context) =>
                                                     const WearablesScreen()),
                                           );
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  Checkbox(
+                                    value: boolWearables,
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        boolWearables = value!;
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                         Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.90,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 238, 238, 238),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Padding(
+                              padding:
+                                  EdgeInsetsDirectional.fromSTEB(10, 7, 18, 5),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: MouseRegion(
+                                      cursor: SystemMouseCursors.click,
+                                      child: GestureDetector(
+                                        child: Row(
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(5, 5, 5, 5),
+                                              child: Text(
+                                                'Samsung Wear OS',
+                                                style: GoogleFonts.getFont(
+                                                  'Lexend',
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 18,
+                                                ),
+                                              ),
+                                            ),
+                                            const Align(
+                                              alignment: Alignment.centerRight,
+                                              child: Icon(
+                                                  Icons.arrow_forward_outlined),
+                                            ),
+                                          ],
+                                        ),
+                                        onTap: () async {
+                                           const url = 'https://wavedata-singapore-polkadot-app.vercel.app/#/';
+                                          if(await canLaunch(url)){
+                                            await launch(url);
+                                          }else {
+                                            throw 'Could not launch $url';
+                                          }
                                         },
                                       ),
                                     ),
