@@ -65,7 +65,7 @@ class _ConnectDataScreenState extends ConsumerState<ConnectDataScreen> {
     final prefs = await SharedPreferences.getInstance();
     var userid = prefs.getString("userid");
     try {
-      var url = Uri.parse('${baseURL}/api/POST/UpadateFhir');
+      var url = Uri.parse('${baseURL}/api/POST/UpdateFhir');
       final response = await http.post(url, headers: POSTheader, body: {
         'userid': userid,
         'givenname': GivenNameTXT.text,

@@ -43,6 +43,7 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
   List<Subject> subjects = [];
   String study_id = "-1";
   String UserName = "";
+  String LoadingText = "";
   bool isloading = true;
   Map<String, dynamic> StudyDetails = {};
 
@@ -69,34 +70,34 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
     }).toList();
 
     final studySubjectsTable = base('study_subjects');
-      final filterByFormula = ' {study_id} = \'${studyid}\'';
-      var sort = [
-        {"field": "Order_ID", "direction": "asc"}
-      ];
+    final filterByFormula = ' {study_id} = \'${studyid}\'';
+    var sort = [
+      {"field": "Order_ID", "direction": "asc"}
+    ];
 
-      final subjects_records = await studySubjectsTable.select(
-          filterBy: (filterByFormula), sortBy: sort);
+    final subjects_records = await studySubjectsTable.select(
+        filterBy: (filterByFormula), sortBy: sort);
 
-      List<Map<String, dynamic>> newSubjects = [];
-      for (var element in subjects_records) {
-        var subjectElement = element;
-        var age = dataAge[0];
-        var eligibleAgesAns = (dataAge.length > 0)
-            ? json.decode(subjectElement['ages_ans'])[age.id]
-            : {};
+    List<Map<String, dynamic>> newSubjects = [];
+    for (var element in subjects_records) {
+      var subjectElement = element;
+      var age = dataAge[0];
+      var eligibleAgesAns = (dataAge.length > 0)
+          ? json.decode(subjectElement['ages_ans'])[age.id]
+          : {};
 
-        newSubjects.add({
-          'subject_id': subjectElement['subject_id'],
-          'study_id': subjectElement['study_id'],
-          'subject_index_id': subjectElement['subject_index_id'],
-          'title': subjectElement['title'],
-          'ages_ans': eligibleAgesAns,
-        });
-      }
+      newSubjects.add({
+        'subject_id': subjectElement['subject_id'],
+        'study_id': subjectElement['study_id'],
+        'subject_index_id': subjectElement['subject_index_id'],
+        'title': subjectElement['title'],
+        'ages_ans': eligibleAgesAns,
+      });
+    }
 
-  List<Subject> dataSubjects = (newSubjects as List).map((e) {
-        return Subject.fromMap((e as Map<String, dynamic>));
-      }).toList();
+    List<Subject> dataSubjects = (newSubjects as List).map((e) {
+      return Subject.fromMap((e as Map<String, dynamic>));
+    }).toList();
 
     var studytitle = (value['study_title'].toString());
 
@@ -112,6 +113,7 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
 
   Future<void> FinishIC() async {
     setState(() {
+      LoadingText =  "Thank you for sending your informed consent. We are now checking the outcomes, which can take around one minute. Please wait";
       isloading = true;
     });
 
@@ -149,13 +151,9 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
     });
     await Future.delayed(Duration(seconds: 2));
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ConnectDataScreen(),
-      ),
-    );
+     
     setState(() {
+         LoadingText =  "";
       isloading = false;
     });
   }
@@ -218,14 +216,24 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
                 ],
               ))),
       backgroundColor: Colors.white,
-      body: InformConsent(isloading, UpdateLoading, ages_groups, study_title,
-          subjects, questionnaireViewmodel, study_id, FinishIC, UserName),
+      body: InformConsent(
+          isloading,
+          LoadingText,
+          UpdateLoading,
+          ages_groups,
+          study_title,
+          subjects,
+          questionnaireViewmodel,
+          study_id,
+          FinishIC,
+          UserName),
     );
   }
 }
 
 class InformConsent extends StatefulWidget {
   final isloading;
+  final loadingText;
   final ages_groups;
   final study_title;
   final UserName;
@@ -238,6 +246,7 @@ class InformConsent extends StatefulWidget {
 
   InformConsent(
       this.isloading,
+      this.loadingText,
       this.UpdateLoading,
       this.ages_groups,
       this.study_title,
@@ -264,6 +273,7 @@ class _InformConsentState extends State<InformConsent> {
     }
 
     var isloading = widget.isloading;
+    var loadingText = widget.loadingText;
     var ages_groups = widget.ages_groups;
     var study_title = widget.study_title;
     String UserName = widget.UserName;
@@ -516,8 +526,8 @@ class _InformConsentState extends State<InformConsent> {
                           top: 0, left: 24, right: 24, bottom: 24),
                       child: GestureDetector(
                         onTap: () async {
-                          questionnaireViewmodel.updateIndex(
-                              questionnaireViewmodel.selectedIndex + 1);
+                          await FinishIC();
+                          questionnaireViewmodel.updateIndex(questionnaireViewmodel.selectedIndex + 1);
                           _scrollToTop();
                         },
                         child: Material(
@@ -560,7 +570,7 @@ class _InformConsentState extends State<InformConsent> {
           ),
           Container(
             margin: EdgeInsets.only(left: 20, right: 20, top: 40),
-            child: Text("You have finished your informed consent",
+            child: Text("Your informed consent is approved",
                 textAlign: TextAlign.center,
                 style: GoogleFonts.getFont('Lexend Deca',
                     color: Color(0xFF423838),
@@ -573,7 +583,12 @@ class _InformConsentState extends State<InformConsent> {
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             GestureDetector(
               onTap: () async {
-                await FinishIC();
+               Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ConnectDataScreen(),
+      ),
+    );
               },
               child: Material(
                 borderRadius: BorderRadius.circular(8),
@@ -588,7 +603,7 @@ class _InformConsentState extends State<InformConsent> {
                   ),
                   child: Center(
                     child: Text(
-                      "Let's fill your personal information",
+                      "Let's connect your medical data",
                       style: GoogleFonts.getFont('Lexend Deca',
                           fontSize: 16, color: Colors.white),
                     ),
@@ -621,15 +636,30 @@ class _InformConsentState extends State<InformConsent> {
                 Expanded(
                     child: Center(
                         child: Container(
-                            height: 150,
-                            width: 150,
-                            child: const SizedBox(
-                              child: CircularProgressIndicator(
-                                color: Color(0xFFF06129),
-                              ),
-                              height: 150.0,
-                              width: 150.0,
-                            ))))
+                              margin: EdgeInsets.only(left: 20, right: 20, top: 80),
+                          child:  Column(
+                          
+                  children: [
+                    Text(
+                        loadingText,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.getFont('Lexend Deca',
+                            color: Color(0xFF423838),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700)),
+                    Container(
+                       margin: EdgeInsets.only(top: 40),
+                        height: 150,
+                        width: 150,
+                        child: const SizedBox(
+                          child: CircularProgressIndicator(
+                            color: Color(0xFFF06129),
+                          ),
+                          height: 150.0,
+                          width: 150.0,
+                        ))
+                  ],
+                ))))
               ]
             : [
                 Expanded(

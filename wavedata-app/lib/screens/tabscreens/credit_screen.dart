@@ -135,7 +135,7 @@ String domain = 'http://127.0.0.1:3000';
     var dataUD = (responseData['value']);
 
     setState(() {
-      userDetails["credits"] = dataUD['credits'] / 1e18;
+      userDetails["credits"] = int.parse( dataUD['credits'].toString().replaceAll(",", "")) / 1e18;
       userDetails["walletAddress"] = dataUD['walletAddress'] ;
     });
 
@@ -278,7 +278,7 @@ String domain = 'http://127.0.0.1:3000';
                                                 fontWeight: FontWeight.w700)),
                                         Text(
                                             userDetails['credits'].toString() +
-                                                " TRX",
+                                                " SBY",
                                             style: GoogleFonts.getFont(
                                                 'Lexend Deca',
                                                 color: Color(0xFFF06129),
@@ -400,7 +400,7 @@ String domain = 'http://127.0.0.1:3000';
                                                                     'ongoingcredit']
                                                                 : 0)
                                                             .toString() +
-                                                        " TRX",
+                                                        " SBY",
                                                     style: GoogleFonts.getFont(
                                                         'Lexend Deca',
                                                         color:

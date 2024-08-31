@@ -14,6 +14,7 @@ export default async function useContract() {
 		getMessage: getMessage,
 		getQuery: getQuery,
 		getTX: getTX,
+		ParseBigNum:ParseBigNum,
 		currentChain: null
 	};
 
@@ -42,7 +43,7 @@ export default async function useContract() {
 	return contractInstance;
 }
 
-
+const ParseBigNum = (num)=> Number(num.replaceAll(",",""))/1e18
 async function sendTransaction(api,contract, signerAddress, method, args = null) {
 	let tx = getTX(contract,method);
 	let query  = getQuery(contract,method);

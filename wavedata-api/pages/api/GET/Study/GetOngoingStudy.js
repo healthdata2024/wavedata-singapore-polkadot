@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   } catch (error) {}
 
   let useContract = await import("../../../../contract/useContract.ts");
-	const {api, contract, signerAddress, sendTransaction, ReadContractByQuery, getMessage, getQuery} = await useContract.default();
+	const {api, contract, signerAddress,ParseBigNum, sendTransaction, ReadContractByQuery, getMessage, getQuery} = await useContract.default();
 
 	let study_id = await ReadContractByQuery(api, signerAddress, getQuery(contract,"GetOngoingStudy"), [Number(req.query.userid)]);
   if (study_id !== "False") {
@@ -19,7 +19,7 @@ export default async function handler(req, res) {
       description: study_element.description,
       contributors: Number(study_element.contributors),
       audience: Number(study_element.audience),
-      budget: Number(study_element.totalSpendingLimit) /1e18
+      budget: ParseBigNum(study_element.totalSpendingLimit) 
     };
     let all_surveys = await ReadContractByQuery(api, signerAddress, getQuery(contract,"getAllSurveysIDByStudy"), [Number(study_id)]);
 

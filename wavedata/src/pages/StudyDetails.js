@@ -201,7 +201,7 @@ function StudyDetails() {
 		DisableButton("rewardsSave");
 
 		try {
-			await sendTransaction(api, signerAddress, "UpdateReward", [Number(parseInt(params.id)), rewardselect.value, Number(rewardprice.value) * 1e18, parseInt(totalspendlimit.value)* 1e18]);
+			await sendTransaction(api, signerAddress, "UpdateReward", [Number(parseInt(params.id)), rewardselect.value, (Number(rewardprice.value) * 1e18).toFixed(0), (parseInt(totalspendlimit.value)* 1e18).toFixed(0)]);
 		} catch (error) {
 			console.error(error);
 		}
@@ -271,10 +271,10 @@ function StudyDetails() {
 				description: study_element.description,
 				contributors: Number(study_element.contributors),
 				audience: Number(allAudiences.length),
-				budget: Number(study_element.budget)/ 1e18,
+				budget: window.ParseBigNum(study_element.budget),
 				reward_type: study_element.rewardType,
-				reward_price: Number(study_element.rewardPrice)/ 1e18,
-				total_spending_limit: Number(study_element.totalSpendingLimit) / 1e18
+				reward_price: window.ParseBigNum(study_element.rewardPrice),
+				total_spending_limit: window.ParseBigNum(study_element.totalSpendingLimit) 
 			};
 			setSTUDY_DATA(newStudy);
 		}
@@ -428,7 +428,7 @@ function StudyDetails() {
 							description: survey_element.description,
 							date: survey_element.date,
 							image: survey_element.image,
-							reward: Number(survey_element.reward),
+							reward: window.ParseBigNum(survey_element.reward),
 							submission: Number(survey_element?.submission),
 							completed: {
 
@@ -1180,7 +1180,7 @@ function StudyDetails() {
 							<p className="text-white ml-2">Survey</p>
 						</button>
 					</div>
-					<table className="table-responsive-xl">
+					<table>
 						<thead className="border-b border-b-gray-400">
 							<tr>
 								{TABLE_COLS.map(({ id, title }) => {

@@ -683,6 +683,10 @@ mod wavedata {
         }
 
         #[ink(message)]
+        pub fn _completedinformedMap(&mut self, id: i32) -> completed_informed_consent_struct {
+            return self._completedinformedMap.get(id).unwrap();
+        }
+        #[ink(message)]
         pub fn _questionanswerdMap(&mut self, id: i32) -> survey_question_answer_struct {
             return self._questionanswerdMap.get(id).unwrap();
         }

@@ -6,7 +6,7 @@ export default async function handler(req, res) {
     } catch (error) { }
 
     let useContract = await import("../../../../contract/useContract.ts");
-    const { api, contract, signerAddress, sendTransaction, ReadContractByQuery, getMessage, getQuery } = await useContract.default();
+    const { api, contract, signerAddress,ParseBigNum, sendTransaction, ReadContractByQuery, getMessage, getQuery } = await useContract.default();
     const { study_id, user_id } = req.query;
 
     //Current Age
@@ -96,7 +96,7 @@ export default async function handler(req, res) {
         description: study_element.description,
         contributors: Number(study_element.contributors),
         audience: Number(study_element.audience),
-        budget: Number(study_element.budget) /1e18,
+        budget: ParseBigNum(study_element.budget),
         permissions: (study_element.permission),
         study_title: study_title_elligible,
         subjects: draft_subjects,
