@@ -378,7 +378,7 @@ String domain = 'https://wavedata-singapore-polkadot.onrender.com';
                                                   const EdgeInsetsDirectional
                                                       .fromSTEB(5, 5, 5, 5),
                                               child: Text(
-                                                'Samsung Wear OS',
+                                                'Samsung',
                                                 style: GoogleFonts.getFont(
                                                   'Lexend',
                                                   color: Colors.black,
