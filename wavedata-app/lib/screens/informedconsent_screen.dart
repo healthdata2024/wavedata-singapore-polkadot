@@ -36,7 +36,7 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
     "Accept": "application/json",
     "Content-Type": "application/x-www-form-urlencoded"
   };
-  String baseURL = 'http://localhost:3000';
+  String baseURL = 'https://wavedata-singapore-polkadot.onrender.com';
 
   var ages_groups = [];
   var study_title = "";
@@ -45,6 +45,7 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
   String UserName = "";
   String LoadingText = "";
   bool isloading = true;
+  // bool isloading = false; //Hard coded for Signature
   Map<String, dynamic> StudyDetails = {};
 
   void UpdateLoading(bool status) {
@@ -160,8 +161,10 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
 
   @override
   initState() {
-    GetData();
     super.initState();
+    GetData();   //Hard coded for Signature
+
+  
   }
 
   var initialized = false;
@@ -171,12 +174,12 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
     var questionnaireViewmodel = ref.watch(questionnaireProvider);
     var navbarViewmodel = ref.watch(navbarProvider);
 
-    if (initialized == false) {
-      questionnaireViewmodel.selectedIndex = 0;
-      navbarViewmodel.selectedIndex = (4);
-      navbarViewmodel.notifyListeners();
-      initialized = true;
-    }
+    // if (initialized == false) {
+    //   questionnaireViewmodel.selectedIndex = 0;
+    //   navbarViewmodel.selectedIndex = (4);
+    //   navbarViewmodel.notifyListeners();
+    //   initialized = true;
+    // }
     return Scaffold(
       appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -296,6 +299,7 @@ class _InformConsentState extends State<InformConsent> {
     List<Widget> renderSections() {
       List<Widget> allsection = [];
 
+      //Hard coded for Signature
       allsection.add(Column(children: [
         Container(
           margin: EdgeInsets.only(top: 64, bottom: 20),

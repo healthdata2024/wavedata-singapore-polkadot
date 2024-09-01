@@ -35,7 +35,7 @@ class _CreditScreenState extends ConsumerState<CreditScreen> {
   };
 
   int userid = 0;
-  String domain = 'http://localhost:3000';
+  String domain = 'https://wavedata-singapore-polkadot.onrender.com';
 
 
   Future<void> GetAccountData() async {

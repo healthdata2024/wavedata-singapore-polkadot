@@ -18,6 +18,9 @@ import 'package:wavedata/screens/main_screen.dart';
 import 'package:wavedata/model/airtable_api.dart';
 import 'package:signature/signature.dart';
 
+import 'package:wavedata/screens/qr_code_generated.dart';
+
+
 class AuthScreen extends StatefulWidget {
   @override
   AuthScreenApp createState() => AuthScreenApp();
@@ -31,7 +34,7 @@ class AuthScreenApp extends State<AuthScreen> {
     "Accept": "application/json",
     "Content-Type": "application/x-www-form-urlencoded"
   };
- String baseURL=  'http://localhost:3000';
+ String baseURL=  'https://wavedata-singapore-polkadot.onrender.com';
  
 
   @override
@@ -54,7 +57,15 @@ class AuthScreenApp extends State<AuthScreen> {
   }
 
   Future<void> LoginAccount() async {
- 
+  //Hard coded for Signature
+
+//  await Navigator.pushReplacement( 
+//                                 context,
+//                                 MaterialPageRoute(
+//                                     builder: (context) =>
+//                                         InformedConsentScreen()),
+//                               );
+      // return;
      if (emailTXT.text == "" || passwordTXT.text == ""){
       ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(

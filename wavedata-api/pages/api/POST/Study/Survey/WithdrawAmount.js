@@ -17,10 +17,10 @@ export default async function handler(req, res) {
 
   const { userid,amount,walletAddress } = req.body;
 
-  await sendTransaction(api,contract,signerAddress, "transfer",[ (Number(amount) * 1e18).toFixed(0),walletAddress]);
+  // await sendTransaction(api,contract,signerAddress, "transfer",[ (Number(amount) * 1e18).toFixed(0),walletAddress]);
   
   let details_element = await ReadContractByQuery(api, signerAddress, getQuery(contract,"getUserDetails"), [Number(userid)]);
-  
+  let image =  details_element[0];
   await sendTransaction(api,contract,signerAddress, "UpdateUser",[Number(userid), image, ((ParseBigNum(details_element[1]) - amount) * 1e18).toFixed(0)]);
   
   res.status(200).json({ status: 200, value: "Updated" })
