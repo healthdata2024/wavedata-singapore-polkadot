@@ -37,14 +37,6 @@ class _CreditScreenState extends ConsumerState<CreditScreen> {
   int userid = 0;
   String domain = 'http://localhost:3000';
 
-  var userDetails = {
-    "userid": -1,
-    "credits": 0,
-    "ongoingcredit": null,
-    "totalongoingcredit": null,
-    "walletAddress": "",
-  };
-
 
   Future<void> GetAccountData() async {
     // Obtain shared preferences.
@@ -170,7 +162,7 @@ class _CreditScreenState extends ConsumerState<CreditScreen> {
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w700)),
                                         Text(
-                                            userDetails['credits'].toString() +
+                                            mainViewModel.userDetails['credits'].toString() +
                                                 " SBY",
                                             style: GoogleFonts.getFont(
                                                 'Lexend Deca',
@@ -255,10 +247,10 @@ class _CreditScreenState extends ConsumerState<CreditScreen> {
                                     CircularPercentIndicator(
                                       radius: 58.0,
                                       lineWidth: 8.0,
-                                      percent: userDetails[
+                                      percent: mainViewModel.userDetails[
                                                       'totalongoingcredit'] ==
                                                   null ||
-                                              userDetails['ongoingcredit'] ==
+                                              mainViewModel.userDetails['ongoingcredit'] ==
                                                   null
                                           ? 0
                                           : percentagecompleted(),
@@ -289,9 +281,9 @@ class _CreditScreenState extends ConsumerState<CreditScreen> {
                                                           FontWeight.w700),
                                                 ),
                                                 Text(
-                                                    ((userDetails['ongoingcredit'] !=
+                                                    ((mainViewModel.userDetails['ongoingcredit'] !=
                                                                     null)
-                                                                ? userDetails[
+                                                                ? mainViewModel.userDetails[
                                                                     'ongoingcredit']
                                                                 : 0)
                                                             .toString() +

@@ -62,7 +62,7 @@ class MainProvider extends ChangeNotifier {
     var dataUD = (responseData['value']);
 
     userDetails["credits"] =
-        int.parse(dataUD['credits'].toString().replaceAll(",", "")) / 1e18;
+        int.parse(dataUD['credits'].toString()) / 1e18;
     userDetails["walletAddress"] = dataUD['walletAddress'];
 
     updateUserDetails(userDetails);
