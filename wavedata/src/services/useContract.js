@@ -10,7 +10,7 @@ import { web3Enable, isWeb3Injected, web3Accounts } from "@polkadot/extension-da
 
 
 const WS_PROVIDER = "wss://rpc.shibuya.astar.network"; // shibuya
-const CONTRACT_ADDRESS = "WtrZb7krkFMHiQSsPjUJ8ReFaAkyoKe5TiKroGdURe2A26d"
+const CONTRACT_ADDRESS = "apfgSpyj5sbQwG6uC9pwX9perpw9UexSSs6ZTpYALseGHHw"
 export default function useContract() {
 	const [contractInstance, setContractInstance] = useState({
 		api: null,
@@ -97,7 +97,8 @@ export default function useContract() {
 				...args)
 				.signAndSend(signerAddress, async (res) => {
 					if (res.status.isInBlock) {
-						console.log("in a block");
+						// console.log("in a block");
+						resolve("OK");
 					} else if (res.status.isFinalized) {
 						console.log("finalized");
 						resolve("OK");

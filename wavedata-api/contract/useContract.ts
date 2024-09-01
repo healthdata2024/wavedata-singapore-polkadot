@@ -77,6 +77,7 @@ async function sendTransaction(api,contract, signerAddress, method, args = null)
 			.signAndSend(pair, async (res) => {
 				if (res.status.isInBlock) {
 					console.log("in a block");
+					resolve("OK");
 				} else if (res.status.isFinalized) {
 					console.log("finalized");
 					resolve("OK");
