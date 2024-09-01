@@ -36,6 +36,7 @@ export default async function useContract() {
 		contractInstance.contract = await getContract(api) as any;
 
 		contractInstance.signerAddress = pair.address as any;
+		console.log("user => " + contractInstance.signerAddress)
 	} catch (error) {
 		console.error(error);
 	}
