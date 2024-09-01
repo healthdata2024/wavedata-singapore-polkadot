@@ -27,11 +27,11 @@ class _WearablesScreenState extends ConsumerState<WearablesScreen> {
     GetAccountData();
   }
 
-String domain = "https://wavedata-singapore-polkadot.onrender.com";
+String domain = "http://localhost:3000";
   String userid = "";
   String AccountTokenAddress = "";
   bool hasDevice = false;
-  var allDevices = [];
+  var allDevices = "";
   List<ChartData> chartDataBlood = [
     ChartData("1/1/2024", 23),
     ChartData("2/1/2024", 55),
@@ -246,10 +246,10 @@ String domain = "https://wavedata-singapore-polkadot.onrender.com";
   }
 
   Future<dynamic> GetDevices() async {
-    var url = Uri.parse(
-         domain + '/api/GET/Wearable/customAPI?userid=${userid}&url=https://api.und-gesund.de/v5/userInformation&token=${this.AccountTokenAddress}');
-    final response = await http.get(url);
-    var responseData = json.decode(response.body);
+    // var url = Uri.parse(
+    //      domain + '/api/GET/Wearable/customAPI?userid=${userid}&url=https://api.und-gesund.de/v5/userInformation&token=${this.AccountTokenAddress}');
+    // final response = await http.get(url);
+    // var responseData = json.decode(response.body);
     setState(() {
       // if (json.decode(responseData['value'])[0]['devices'].length > 0) {
       //   hasDevice = true;
@@ -264,7 +264,8 @@ String domain = "https://wavedata-singapore-polkadot.onrender.com";
       hasDevice = true;
     });
 
-    return json.decode(responseData['value'])[0]['devices'];
+      return "Sense 2";
+    // return json.decode(responseData['value'])[0]['devices'];
   }
 
   @override
@@ -365,9 +366,9 @@ String domain = "https://wavedata-singapore-polkadot.onrender.com";
                 ),
                 child: Align(
                   alignment: AlignmentDirectional(0, 0),
-                  child: allDevices.length > 0
+                  child: !allDevices.isEmpty 
                       ? Text(
-                          allDevices[0]['configuration']['deviceVersion'],
+                          allDevices,
                           textAlign: TextAlign.center,
                           style: TextStyle(color: Colors.white),
                         )

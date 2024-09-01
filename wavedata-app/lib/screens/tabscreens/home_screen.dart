@@ -37,7 +37,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     "accept": "application/fhir+json",
     "x-api-key": "Qi8TXQVe1C2zxiYOdKKm7RQk6qz0h7n19zu1RMg5"
   };
-String domain = 'https://wavedata-singapore-polkadot.onrender.com';
+String domain = 'http://localhost:3000';
 
   String userid = "";
   String StudyId = "";
@@ -235,9 +235,9 @@ dummyActions = [];
       StudyId = (prefs.getString("studyid").toString());
     });
 
-    GetAvialbleData();
-    GetOngoingData();
-    GetUserData(userid);
+   await GetAvialbleData();
+   await GetOngoingData();
+   await GetUserData(userid);
   }
 
   var dummyActions = [];
