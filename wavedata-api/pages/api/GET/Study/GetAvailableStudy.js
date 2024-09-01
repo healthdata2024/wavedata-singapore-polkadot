@@ -13,11 +13,11 @@ export default async function handler(req, res) {
   let all_available_studies = [];
   for (let i = 0; i < Number(totalStudies); i++) {
     let study_element = await ReadContractByQuery(api, signerAddress, getQuery(contract,"_studyMap"), [Number(i)]);
-    let allAges = [];
+    let ages_groups = {};
     try {
-      allAges = JSON.parse(study_element.ages);
+      ages_groups = JSON.parse(study_element.ages);
     } catch (e) {
-      allAges = [];
+      ages_groups = {};
     }
     
 
