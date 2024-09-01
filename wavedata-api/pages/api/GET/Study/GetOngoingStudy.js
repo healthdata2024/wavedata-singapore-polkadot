@@ -35,7 +35,7 @@ export default async function handler(req, res) {
         description: survey_element.description,
         date: survey_element.date,
         image: survey_element.image,
-        reward: Number(survey_element.reward),
+        reward: ParseBigNum(survey_element.reward),
         submission: Number(survey_element?.submission)
       };
       all_study_surveys.push(new_survey);

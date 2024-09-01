@@ -41,6 +41,8 @@ String domain = 'http://localhost:3000';
     SurveyId = prefs.getString("surveyid").toString();
     userId = (prefs.getString("userid").toString());
     StudyId = (prefs.getString("studyid").toString());
+  var questionnaireViewmodel = ref.watch(questionnaireProvider);
+  questionnaireViewmodel.updateIndex(0);
 
     allSections = [];
     allCategory = [];

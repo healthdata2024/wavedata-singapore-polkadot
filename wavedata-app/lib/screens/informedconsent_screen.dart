@@ -215,7 +215,7 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
                       : Text(""),
                 ],
               ))),
-      backgroundColor: Colors.white,
+      backgroundColor:Colors.white,
       body: InformConsent(
           isloading,
           LoadingText,

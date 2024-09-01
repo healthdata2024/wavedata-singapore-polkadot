@@ -11,6 +11,7 @@ import 'package:wavedata/model/airtable_api.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wavedata/providers/main_provider.dart';
 import 'package:wavedata/screens/auth_screen.dart';
 
 class JourneyScreen extends ConsumerStatefulWidget {
@@ -37,7 +38,7 @@ class _JourneyScreenState extends ConsumerState<JourneyScreen> {
     "x-api-key": "Qi8TXQVe1C2zxiYOdKKm7RQk6qz0h7n19zu1RMg5"
   };
 String domain = 'http://localhost:3000';
-  var supportStatus = {"level1": false, "level2": false};
+  // var supportStatus = {"level1": false, "level2": false};
 
   String userid = "";
   String StudyId = "";
@@ -49,54 +50,6 @@ String domain = 'http://localhost:3000';
   }
 
 
-  Future<void> GetOngoingData() async {
-    UpdateLoading(true);
-var url = Uri.parse(
-        '${domain}/api/GET/Study/GetOngoingStudy?userid=${userid}');
-    var correctStatus = false;
-    var response = null;
-    while (correctStatus == false) {
-      final response_draft = await http.get(url);
-      if (response_draft.statusCode == 200) {
-        correctStatus = true;
-        response = response_draft;
-      } else {
-        await Future.delayed(Duration(seconds: 2));
-      }
-    }
-    var responseData = json.decode(response.body);
-
-    var data = (responseData['value']);
-
-    if (data != "None") {
-      var decoded_data = json.decode(data);
-
-      setState(() {
-        if (decoded_data['CompletedInformed'] != "False"){
-            supportStatus['level1'] = true;
-        }
-
-        //Surveys
-        var SurveyAllElement = decoded_data['Survey'];
-        var SurveyAllCompletedElement = decoded_data['Completed'];
-
-        for (var i = 0; i < SurveyAllElement.length; i++) {
-          var SurveyElement = SurveyAllElement[i];
-          var completedSurvey = SurveyAllCompletedElement.where(
-              (e) => e['survey_id'] == SurveyElement['id']);
-          if (completedSurvey.length > 0) {
-            supportStatus['level2'] = true;
-          }
-        }
-      });
-    }
-
-
-
-    
-    UpdateLoading(false);
-  }
-
   Future<void> GetAccountData() async {
     // Obtain shared preferences.
     final prefs = await SharedPreferences.getInstance();
@@ -104,12 +57,13 @@ var url = Uri.parse(
       userid = (prefs.getString("userid").toString());
       StudyId = (prefs.getString("studyid").toString());
     });
-    GetOngoingData();
   }
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+  final mainViewModel = ref.watch(mainProvider);
+
 
     Future<void> Logout() async {
       final prefs = await SharedPreferences.getInstance();
@@ -142,7 +96,7 @@ var url = Uri.parse(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(128),
             ),
-            child: supportStatus["level1"] == true
+            child: mainViewModel.supportStatus["level1"] == true
                 ? Image.asset(
                     "assets/images/support/level1completed.png",
                   )
@@ -160,21 +114,21 @@ var url = Uri.parse(
                 //padding: EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(128),
-                  color: supportStatus["level2"] != true
+                  color: mainViewModel.supportStatus["level2"] != true
                       ? Color(0xFFe7dcdc)
                       : Colors.white,
                 ),
                 child: CircularPercentIndicator(
                   radius: 50.0,
                   lineWidth: 7.0,
-                  percent: supportStatus["level2"] == true ? 1 : 0,
+                  percent: mainViewModel.supportStatus["level2"] == true ? 1 : 0,
                   center: Container(
                     width: 60,
                     padding: EdgeInsets.all(5),
                     child: Image.asset(
                       "assets/images/gift_big.png",
                       opacity: AlwaysStoppedAnimation(
-                          supportStatus["level2"] == true ? 1 : 0.5),
+                          mainViewModel.supportStatus["level2"] == true ? 1 : 0.5),
                     ),
                   ),
                   circularStrokeCap: CircularStrokeCap.round,

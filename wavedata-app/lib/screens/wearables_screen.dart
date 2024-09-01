@@ -33,44 +33,44 @@ String domain = "http://localhost:3000";
   bool hasDevice = false;
   var allDevices = "";
   List<ChartData> chartDataBlood = [
-    ChartData("1/1/2024", 23),
-    ChartData("2/1/2024", 55),
-    ChartData("3/1/2024", 76),
-    ChartData("4/1/2024", 33),
-    ChartData("5/1/2024", 55),
-    ChartData("6/1/2024", 99),
-    ChartData("7/1/2024", 88),
-    ChartData("8/1/2024", 87)
+    ChartData("1/8/2024", 23),
+    ChartData("2/8/2024", 55),
+    ChartData("3/8/2024", 76),
+    ChartData("4/8/2024", 33),
+    ChartData("5/8/2024", 55),
+    ChartData("6/8/2024", 99),
+    ChartData("7/8/2024", 88),
+    ChartData("8/8/2024", 87)
   ];
   List<ChartData> chartDataSleep = [
-    ChartData("1/1/2024", 445),
-    ChartData("2/1/2024", 656),
-    ChartData("3/1/2024", 443),
-    ChartData("4/1/2024", 787),
-    ChartData("5/1/2024", 834),
-    ChartData("6/1/2024", 590),
-    ChartData("7/1/2024", 776),
-    ChartData("8/1/2024", 589)
+    ChartData("1/8/2024", 445),
+    ChartData("2/8/2024", 656),
+    ChartData("3/8/2024", 443),
+    ChartData("4/8/2024", 787),
+    ChartData("5/8/2024", 834),
+    ChartData("6/8/2024", 590),
+    ChartData("7/8/2024", 776),
+    ChartData("8/8/2024", 589)
   ];
   List<ChartData> chartDataCalories = [
-    ChartData("1/1/2024", 67),
-    ChartData("2/1/2024", 78),
-    ChartData("3/1/2024", 89),
-    ChartData("4/1/2024", 98),
-    ChartData("5/1/2024", 78),
-    ChartData("6/1/2024", 90),
-    ChartData("7/1/2024", 78),
-    ChartData("8/1/2024", 89)
+    ChartData("1/8/2024", 67),
+    ChartData("2/8/2024", 78),
+    ChartData("3/8/2024", 89),
+    ChartData("4/8/2024", 98),
+    ChartData("5/8/2024", 78),
+    ChartData("6/8/2024", 90),
+    ChartData("7/8/2024", 78),
+    ChartData("8/8/2024", 89)
   ];
   List<ChartData> chartDataSteps = [
-    ChartData("1/1/2024", 76),
-    ChartData("2/1/2024", 54),
-    ChartData("3/1/2024", 34),
-    ChartData("4/1/2024", 90),
-    ChartData("5/1/2024", 67),
-    ChartData("6/1/2024", 54),
-    ChartData("7/1/2024", 67),
-    ChartData("8/1/2024", 45)
+    ChartData("1/8/2024", 76),
+    ChartData("2/8/2024", 54),
+    ChartData("3/8/2024", 34),
+    ChartData("4/8/2024", 90),
+    ChartData("5/8/2024", 67),
+    ChartData("6/8/2024", 54),
+    ChartData("7/8/2024", 67),
+    ChartData("8/8/2024", 45)
   ];
   String durationToString(int minutes) {
     var d = Duration(minutes: minutes);
@@ -88,17 +88,17 @@ String domain = "http://localhost:3000";
   }
 
   Future<void> GetTokenAddress() async {
-    var url = Uri.parse(
-        domain +'/api/GET/getUserDetails?userid=1');
-    final response = await http.get(url);
-    var responseData = json.decode(response.body);
+    // var url = Uri.parse(
+    //     domain +'/api/GET/getUserDetails?userid=1');
+    // final response = await http.get(url);
+    // var responseData = json.decode(response.body);
 
-    var dataUD = (responseData['value']);
+    // var dataUD = (responseData['value']);
 
-    setState(() {
-      AccountTokenAddress = dataUD['accessToken'];
-      print(AccountTokenAddress);
-    });
+    // setState(() {
+    //   AccountTokenAddress = dataUD['accessToken'];
+    //   print(AccountTokenAddress);
+    // });
   }
 
   Future<void> generateLoginLink() async {
@@ -305,7 +305,7 @@ String domain = "http://localhost:3000";
                   )
                 ],
               ))),
-      backgroundColor: Colors.white,
+      backgroundColor:Colors.white,
       body: SingleChildScrollView(
           child: Padding(
         padding: EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),

@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:wavedata/model/study.dart';
 import 'package:wavedata/model/study_action.dart';
 import 'package:wavedata/providers/navbar_provider.dart';
+import 'package:wavedata/providers/main_provider.dart';
 import 'package:wavedata/screens/auth_screen.dart';
 import 'package:wavedata/screens/feeling_screen.dart';
 import 'package:wavedata/screens/informedconsent_screen.dart';
@@ -33,16 +34,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     "Content-Type": "application/x-www-form-urlencoded"
   };
 
-  var FHIRheader = {
-    "accept": "application/fhir+json",
-    "x-api-key": "Qi8TXQVe1C2zxiYOdKKm7RQk6qz0h7n19zu1RMg5"
-  };
-String domain = 'http://localhost:3000';
+
+  String domain = 'http://localhost:3000';
 
   String userid = "";
   String StudyId = "";
   int startStudy = 0;
-  String ImageLink = "https://i.postimg.cc/SsxGw5cZ/person.jpg";
+  
   var userDetails = {
     "userid": "",
     "credits": 0,
@@ -61,9 +59,9 @@ String domain = 'http://localhost:3000';
 
   Future<void> GetAvialbleData() async {
     avilableStudies = [];
-   
-var url = Uri.parse(
-        '${domain}/api/GET/Study/GetAvailableStudy?userid=${userid}');
+
+    var url =
+        Uri.parse('${domain}/api/GET/Study/GetAvailableStudy?userid=${userid}');
     var correctStatus = false;
     var response = null;
     while (correctStatus == false) {
@@ -89,178 +87,31 @@ var url = Uri.parse(
                 permission: element['permissions']));
           })
         });
-
   }
 
-  Future<void> GetOngoingData() async {
-    ongoingStudies = {
-      "studyid": "",
-      "title": "",
-      "description": "",
-      "image": "",
-      "startSurvey": 0,
-      "totalprice": 0
-    };
-
-dummyActions = [];
-    var url = Uri.parse(
-        '${domain}/api/GET/Study/GetOngoingStudy?userid=${userid}');
-    var correctStatus = false;
-    var response = null;
-    while (correctStatus == false) {
-      final response_draft = await http.get(url);
-      if (response_draft.statusCode == 200) {
-        correctStatus = true;
-        response = response_draft;
-      } else {
-        await Future.delayed(Duration(seconds: 2));
-      }
-    }
-    var responseData = json.decode(response.body);
-
-    var data = (responseData['value']);
-
-    if (data != "None") {
-      setState(() {
-        isOngoingStudy = true;
-      });
-      var decoded_data = json.decode(data);
-      try {
-        //Studies
-        var element = decoded_data['Study'];
-        setState(() {
-          ongoingStudies['studyid'] = element['id'];
-          ongoingStudies['title'] = element['title'];
-          ongoingStudies['image'] = element['image'];
-          ongoingStudies['description'] = element['description'];
-          ongoingStudies['totalprice'] = element['budget'];
-          userDetails['totalongoingcredit'] =
-              element['budget'] != null ? element['budget'] : 0;
-        });
-      } catch (e) {}
-
-      try{
-        //Informed Consent
-        
-        var InformedCompleted = decoded_data['CompletedInformed'];
-
-        if (InformedCompleted != "False"){
-           //Informed Consent
-          setState(() {
-            String timeToday =
-                Jiffy(DateTime.parse(InformedCompleted['date'])).fromNow();
-            onGoingInformedConsent = StudyAction(
-                id: "informed_consent",
-                when: timeToday,
-                content: "Informed Consent",
-                isDone: true);
-          });
-        }
-
-      }catch(e){}
-
-      setState(() {
-        //Surveys
-        var SurveyAllElement = decoded_data['Survey'];
-        var SurveyAllCompletedElement = decoded_data['Completed'];
-        int totalcredit = 0;
-        bool first_today = false;
-
-        for (var i = 0; i < SurveyAllElement.length; i++) {
-          var SurveyElement = SurveyAllElement[i];
-          var completedSurvey = SurveyAllCompletedElement.where(
-              (e) => e['survey_id'] == SurveyElement['id']);
-          String timeToday = "Today";
-          if (completedSurvey.length > 0) {
-            var completedData = completedSurvey.toList()[0];
-            String completedDate = completedData['date'];
-            String timeToday =
-                Jiffy(DateTime.parse(completedDate)).fromNow(); // a year ago
-            totalcredit += int.parse(SurveyElement['reward'].toString());
-          }
-          bool status = completedSurvey.length > 0;
-         if (!status) {
-          timeToday = "Tomorrow";
-          if (!first_today) {
-            timeToday = "Today";
-            first_today = true;
-          }
-        }
-          dummyActions.add(
-            StudyAction(
-                id: SurveyElement['id'].toString(),
-                when: timeToday,
-                content: SurveyElement['name'],
-                isDone: status),
-          );
-        }
-        userDetails['ongoingcredit'] = totalcredit;
-      });
-    }
-
-
-
-  }
-
-  Future<void> GetUserData(String userid) async {
-     var url = Uri.parse(
-        '${domain}/api/GET/getUserDetails?userid=${userid}');
-    var correctStatus = false;
-    var response = null;
-    while (correctStatus == false) {
-      final response_draft = await http.get(url);
-      if (response_draft.statusCode == 200) {
-        correctStatus = true;
-        response = response_draft;
-      } else {
-        await Future.delayed(Duration(seconds: 2));
-      }
-    }
-    var responseData = json.decode(response.body);
-
-    var dataUD = (responseData['value']);
-
-    setState(() {
-      var imageData = dataUD['image'];
-      ImageLink = imageData;
-    });
-
-  }
 
   Future<void> GetAccountData() async {
     // Obtain shared preferences.
     final prefs = await SharedPreferences.getInstance();
+    final mainViewModel = ref.watch(mainProvider);
     setState(() {
       userid = (prefs.getString("userid").toString());
       StudyId = (prefs.getString("studyid").toString());
     });
 
-   await GetAvialbleData();
-   await GetOngoingData();
-   await GetUserData(userid);
+    await GetAvialbleData();
+   
+    await mainViewModel.GetUserData();
+    await mainViewModel.GetOngoingData();
   }
 
-  var dummyActions = [];
-  var ongoingStudies = {
-    "studyid": "",
-    "title": "",
-    "description": "",
-    "image": "",
-    "startSurvey": 0
-  };
-  var onGoingInformedConsent = StudyAction(
-      id: "informed_consent",
-      when: "Today",
-      content: "Informed Consent",
-      isDone: false);
-  bool isOngoingStudy = false;
 
   var avilableStudies = [];
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    var navbarViewmodel = ref.watch(navbarProvider);
+
     Future<void> Logout() async {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove("userid");
@@ -272,17 +123,17 @@ dummyActions = [];
       );
     }
 
-       //FHIR switches
+    //FHIR switches
     bool FamilyNameSwitch = false;
     bool GivenNameSwitch = false;
     bool GenderSwitch = false;
     bool PhoneSwitch = false;
     bool AboutSwitch = false;
     //Wearable switches
-    bool BloodSwitch =false;
-    bool SleepSwitch =false;
-    bool StepsSwitch =false;
-    bool CaloriesSwitch =false;
+    bool BloodSwitch = false;
+    bool SleepSwitch = false;
+    bool StepsSwitch = false;
+    bool CaloriesSwitch = false;
 
     bool SetSwitches(int type, bool value, {int fhirtype = 0}) {
       if (fhirtype == 0) {
@@ -323,12 +174,11 @@ dummyActions = [];
       return value;
     }
 
-
     Future<void> StartStudy(int studyid) async {
       final prefs = await SharedPreferences.getInstance();
       String userid = (prefs.getString("userid").toString());
 
-          var given_permission = {
+      var given_permission = {
         "family": FamilyNameSwitch,
         "given": GivenNameSwitch,
         "gender": GenderSwitch,
@@ -342,27 +192,13 @@ dummyActions = [];
 
       String JsonMadePermission = given_permission.toString();
 
-      var url =
-          Uri.parse('${domain}/api/POST/Study/CreateOngoingStudy');
+      var url = Uri.parse('${domain}/api/POST/Study/CreateOngoingStudy');
       await http.post(url, headers: POSTheader, body: {
         'studyid': studyid.toString(),
         'userid': userid.toString(),
         'given_permission': JsonMadePermission
       });
       await Future.delayed(Duration(seconds: 2));
-      Navigator.pop(context);
-    }
-
-    Future<void> WithdrawAmount(Amount) async {
-      final prefs = await SharedPreferences.getInstance();
-      String userid = (prefs.getString("userid").toString());
-
-      var url = Uri.parse(
-          '${domain}/api/POST/Study/Survey/WithdrawAmount');
-      await http.post(url,
-          headers: POSTheader,
-          body: {'userid': userid.toString(), 'amount': Amount});
-      await GetAccountData();
       Navigator.pop(context);
     }
 
@@ -384,6 +220,8 @@ dummyActions = [];
           builder: (context) =>
               OngoingDialog(studyid, permissions, SetSwitches, StartStudy));
     }
+
+    final mainViewModel = ref.watch(mainProvider);
 
     return //home
         Container(
@@ -429,7 +267,7 @@ dummyActions = [];
                                 children: [
                                   Container(
                                     child: Image.network(
-                                      ImageLink,
+                                      mainViewModel.ProfileImage,
                                       fit: BoxFit.fitWidth,
                                     ),
                                   ),
@@ -525,7 +363,7 @@ dummyActions = [];
                   RefreshIndicator(
                       onRefresh: () {
                         return Future<void>(() async {
-                          GetOngoingData();
+                          mainViewModel.GetOngoingData();
                           await GetAvialbleData();
                         });
                       },
@@ -533,17 +371,17 @@ dummyActions = [];
                         Container(
                           height: 240,
                           width: size.width,
-                          child: isOngoingStudy == true
+                          child: mainViewModel.isOngoingStudy == true
                               ? ClipRRect(
                                   child: RefreshIndicator(
-                                    onRefresh: GetOngoingData,
+                                    onRefresh: mainViewModel.GetOngoingData,
                                     child: Wrap(
                                       children: [
                                         Container(
                                           margin: const EdgeInsets.only(
                                               left: 16, top: 8, bottom: 8),
                                           child: Text(
-                                              ongoingStudies['title']
+                                              mainViewModel.ongoingStudies['title']
                                                   .toString(),
                                               style: GoogleFonts.getFont(
                                                   'Lexend Deca',
@@ -551,7 +389,7 @@ dummyActions = [];
                                                   fontWeight: FontWeight.bold)),
                                         ),
                                         Image.network(
-                                            ongoingStudies['image'].toString(),
+                                            mainViewModel.ongoingStudies['image'].toString(),
                                             width: size.width,
                                             fit: BoxFit.cover)
                                       ],
@@ -563,25 +401,25 @@ dummyActions = [];
                         ),
                         Positioned(
                             bottom: 5,
-                            child: isOngoingStudy == true
+                            child: mainViewModel.isOngoingStudy == true
                                 ? Container(
                                     width: size.width - 20,
                                     height: 150,
                                     child: ListView.builder(
-                                      itemCount: dummyActions.length + 1,
+                                      itemCount: mainViewModel.surveyActions.length + 1,
                                       padding: EdgeInsets.only(left: 8),
                                       scrollDirection: Axis.horizontal,
                                       itemBuilder: ((context, index) => index ==
                                               0
                                           ? ActionTile(
-                                              action: onGoingInformedConsent,
+                                              action: mainViewModel.onGoingInformedConsent,
                                               startFunction: () async {
                                                 final prefs =
                                                     await SharedPreferences
                                                         .getInstance();
                                                 prefs.setString(
                                                     "studyid",
-                                                    ongoingStudies["studyid"]
+                                                    mainViewModel.ongoingStudies["studyid"]
                                                         .toString());
                                                 await Navigator.push(
                                                   context,
@@ -593,7 +431,7 @@ dummyActions = [];
                                                 GetAccountData();
                                               })
                                           : ActionTile(
-                                              action: dummyActions[index - 1],
+                                              action: mainViewModel.surveyActions[index - 1],
                                               startFunction: () async {
                                                 await Navigator.push(
                                                   context,
@@ -690,7 +528,7 @@ dummyActions = [];
                   ),
                   onRefresh: () {
                     return Future<void>(() async {
-                      GetOngoingData();
+                      mainViewModel.GetOngoingData();
                       await GetAvialbleData();
                     });
                   }),
@@ -825,19 +663,17 @@ class OngoingDialog extends StatefulWidget {
 }
 
 class _OngoingDialogState extends State<OngoingDialog> {
- 
-
-       //FHIR switches
-    bool FamilyNameSwitch =false;
-    bool GivenNameSwitch =false;
-    bool GenderSwitch =false;
-    bool PhoneSwitch =false;
-    bool AboutSwitch =false;
-    //Wearable switches
-    bool BloodSwitch =false;
-    bool SleepSwitch =false;
-    bool StepsSwitch =false;
-    bool CaloriesSwitch =false;
+  //FHIR switches
+  bool FamilyNameSwitch = false;
+  bool GivenNameSwitch = false;
+  bool GenderSwitch = false;
+  bool PhoneSwitch = false;
+  bool AboutSwitch = false;
+  //Wearable switches
+  bool BloodSwitch = false;
+  bool SleepSwitch = false;
+  bool StepsSwitch = false;
+  bool CaloriesSwitch = false;
 
   bool GetPermission(String type) {
     return jsonDecode(widget.permissions)[type];
@@ -867,7 +703,7 @@ class _OngoingDialogState extends State<OngoingDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-               GetPermission('family')
+                GetPermission('family')
                     ? Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 5),
                         child: SwitchListTile(

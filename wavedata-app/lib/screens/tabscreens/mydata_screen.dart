@@ -8,6 +8,7 @@ import 'package:wavedata/model/airtable_api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:wavedata/providers/main_provider.dart';
 import 'package:wavedata/screens/qr_code_generated.dart';
 import 'package:wavedata/screens/wearables_screen.dart';
 import 'package:wavedata/screens/auth_screen.dart';
@@ -33,17 +34,11 @@ class _MyDataScreenState extends ConsumerState<MyDataScreen> {
     "Content-Type": "application/x-www-form-urlencoded"
   };
 
-  var FHIRheader = {
-    "accept": "application/fhir+json",
-    "x-api-key": "Qi8TXQVe1C2zxiYOdKKm7RQk6qz0h7n19zu1RMg5"
-  };
 
-String domain = 'http://localhost:3000';
+  String domain = 'http://localhost:3000';
 
   String userid = "";
   String StudyId = "";
-
-  String ImageLink = "https://i.postimg.cc/SsxGw5cZ/person.jpg";
 
   var refreshkey = GlobalKey<RefreshIndicatorState>();
   bool boolWearables = false;
@@ -55,7 +50,7 @@ String domain = 'http://localhost:3000';
   bool boolAbout = false;
   String wrappedData = "";
   Future<void> GenerateQRCode() async {
-     var choosenData = [];
+    var choosenData = [];
     if (boolGender) {
       choosenData.add({"Gender": PatientDetails['gender']});
     }
@@ -80,27 +75,7 @@ String domain = 'http://localhost:3000';
   }
 
   Future<void> GetFHIRData(String userid) async {
- var url = Uri.parse(
-        '${domain}/api/GET/getUserDetails?userid=${userid}');
-    var correctStatus = false;
-    var response = null;
-    while (correctStatus == false) {
-      final response_draft = await http.get(url);
-      if (response_draft.statusCode == 200) {
-        correctStatus = true;
-        response = response_draft;
-      } else {
-        await Future.delayed(Duration(seconds: 2));
-      }
-    }
-    var responseData = json.decode(response.body);
-
-    var dataUD = (responseData['value']);
-
-    setState(() {
-      var imageData = dataUD['image'];
-      ImageLink = imageData;
-    });
+   
 
     var urlFH = Uri.parse(
         '${domain}/api/GET/getFhir?userid=${int.parse(userid.toString())}');
@@ -121,8 +96,6 @@ String domain = 'http://localhost:3000';
         });
       } catch (e) {}
     }
-
-
   }
 
   Future<void> GetAccountData() async {
@@ -147,13 +120,19 @@ String domain = 'http://localhost:3000';
 
   TextEditingController _textFieldController = TextEditingController();
   void UpdateImage() async {
-    setState(() {
-      ImageLink = _textFieldController.text;
-    });
-    final prefs = await SharedPreferences.getInstance();
-    String userid = (prefs.getString("userid").toString());
-       final UsersTable = base('users');
-        await UsersTable.update(userid, {"image": _textFieldController.text});
+    final profileViewmodel = ref.watch(mainProvider);
+    profileViewmodel.updateImage(_textFieldController.text);
+   
+
+      final prefs = await SharedPreferences.getInstance();
+      String userid = (prefs.getString("userid").toString());
+
+     var url = Uri.parse(
+          '${domain}/api/POST/UpdateImage');
+      await http.post(url, headers: POSTheader, body: {
+        'userid': userid.toString(),
+        'image': _textFieldController.text
+      });
 
     Navigator.pop(context);
   }
@@ -182,6 +161,7 @@ String domain = 'http://localhost:3000';
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+    final profileViewmodel = ref.watch(mainProvider);
 
     Future<void> Logout() async {
       final prefs = await SharedPreferences.getInstance();
@@ -250,7 +230,7 @@ String domain = 'http://localhost:3000';
                       Container(
                         child: Wrap(
                           children: [
-                            Image.network(ImageLink,
+                            Image.network(profileViewmodel.ProfileImage,
                                 width: size.width, fit: BoxFit.fill)
                           ],
                         ),
@@ -353,7 +333,7 @@ String domain = 'http://localhost:3000';
                             ),
                           ),
                         ),
-                         Padding(
+                        Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
                           child: Container(
                             width: MediaQuery.of(context).size.width * 0.90,
@@ -395,10 +375,11 @@ String domain = 'http://localhost:3000';
                                           ],
                                         ),
                                         onTap: () async {
-                                           const url = 'https://wavedata-singapore-polkadot-app.vercel.app/#/';
-                                          if(await canLaunch(url)){
+                                          const url =
+                                              'https://wavedata-singapore-polkadot-app.vercel.app/#/';
+                                          if (await canLaunch(url)) {
                                             await launch(url);
-                                          }else {
+                                          } else {
                                             throw 'Could not launch $url';
                                           }
                                         },
@@ -418,7 +399,7 @@ String domain = 'http://localhost:3000';
                             ),
                           ),
                         ),
-                      Padding(
+                        Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
                           child: Container(
                             width: MediaQuery.of(context).size.width * 0.90,
@@ -698,7 +679,7 @@ String domain = 'http://localhost:3000';
                                     ])),
                           ),
                         ),
-                       GestureDetector(
+                        GestureDetector(
                             onTap: () async {
                               await GenerateQRCode();
 

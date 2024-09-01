@@ -14,6 +14,8 @@ import 'package:wavedata/model/offer.dart';
 import 'package:wavedata/screens/auth_screen.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
+import '../../providers/main_provider.dart';
+
 class CreditScreen extends ConsumerStatefulWidget {
   const CreditScreen({Key? key}) : super(key: key);
 
@@ -25,7 +27,6 @@ class _CreditScreenState extends ConsumerState<CreditScreen> {
   @override
   initState() {
     super.initState();
-    GetAccountData();
   }
 
   var POSTheader = {
@@ -34,7 +35,7 @@ class _CreditScreenState extends ConsumerState<CreditScreen> {
   };
 
   int userid = 0;
-String domain = 'http://localhost:3000';
+  String domain = 'http://localhost:3000';
 
   var userDetails = {
     "userid": -1,
@@ -45,124 +46,17 @@ String domain = 'http://localhost:3000';
   };
 
 
-  Future<void> GetOngoingData() async {
-    ongoingStudies = {
-      "studyid": -1,
-      "title": "",
-      "description": "",
-      "image": "",
-      "startSurvey": 0,
-      "totalprice": 0
-    };
-
-    var url = Uri.parse(
-        '${domain}/api/GET/Study/GetOngoingStudy?userid=${userid}');
-    var correctStatus = false;
-    var response = null;
-    while (correctStatus == false) {
-      final response_draft = await http.get(url);
-      if (response_draft.statusCode == 200) {
-        correctStatus = true;
-        response = response_draft;
-      } else {
-        await Future.delayed(Duration(seconds: 2));
-      }
-    }
-    var responseData = json.decode(response.body);
-
-    var data = (responseData['value']);
-
-    if (data != "None") {
-      setState(() {
-        isOngoingStudy = true;
-      });
-      var decoded_data = json.decode(data);
-      try {
-        //Studies
-        var element = decoded_data['Study'];
-        setState(() {
-          ongoingStudies['studyid'] = element['id'];
-          ongoingStudies['title'] = element['title'];
-          ongoingStudies['image'] = element['image'];
-          ongoingStudies['description'] = element['description'];
-          ongoingStudies['totalprice'] = element['budget'];
-          userDetails['totalongoingcredit'] =
-              element['budget'] != null ? element['budget'] : 0;
-        });
-      } catch (e) {}
-
-      setState(() {
-        //Surveys
-        var SurveyAllElement = decoded_data['Survey'];
-        var SurveyAllCompletedElement = decoded_data['Completed'];
-        int totalcredit = 0;
-        for (var i = 0; i < SurveyAllElement.length; i++) {
-          var SurveyElement = SurveyAllElement[i];
-          var completedSurvey = SurveyAllCompletedElement.where(
-              (e) => e['survey_id'] == SurveyElement['id']);
-          String timeToday = "Today";
-          if (completedSurvey.length > 0) {
-            var completedData = completedSurvey.toList()[0];
-            String completedDate = completedData['date'];
-            String timeToday =
-                Jiffy(DateTime.parse(completedDate)).fromNow(); // a year ago
-
-            totalcredit += int.parse(SurveyElement['reward'].toString());
-          }
-       
-        }
-        userDetails['ongoingcredit'] = totalcredit;
-      });
-    }
-  }
-
-  Future<void> GetUserData(int userid) async {
-    var url = Uri.parse(
-        '${domain}/api/GET/getUserDetails?userid=${userid}');
-    var correctStatus = false;
-    var response = null;
-    while (correctStatus == false) {
-      final response_draft = await http.get(url);
-      if (response_draft.statusCode == 200) {
-        correctStatus = true;
-        response = response_draft;
-      } else {
-        await Future.delayed(Duration(seconds: 2));
-      }
-    }
-    var responseData = json.decode(response.body);
-
-    var dataUD = (responseData['value']);
-
-    setState(() {
-      userDetails["credits"] = int.parse( dataUD['credits'].toString().replaceAll(",", "")) / 1e18;
-      userDetails["walletAddress"] = dataUD['walletAddress'] ;
-    });
-
-   
-  }
-
   Future<void> GetAccountData() async {
     // Obtain shared preferences.
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       userid = int.parse(prefs.getString("userid").toString());
     });
+    final mainViewModel = ref.watch(mainProvider);
 
-    GetUserData(userid);
-    GetOngoingData();
+   await mainViewModel.GetUserData();
+    mainViewModel.GetOngoingData();
   }
-
-
-  var ongoingStudies = {
-    "studyid": -1,
-    "title": "",
-    "description": "",
-    "image": "",
-    "startSurvey": 0
-  };
-  bool isOngoingStudy = false;
-
 
   var dummyOffers = [
     Offer(
@@ -190,8 +84,9 @@ String domain = 'http://localhost:3000';
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    
-     Future<void> Logout() async {
+    final mainViewModel = ref.watch(mainProvider);
+
+    Future<void> Logout() async {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove("userid");
       Navigator.pushReplacement(
@@ -203,32 +98,30 @@ String domain = 'http://localhost:3000';
     }
 
     double percentagecompleted() {
-      int total = int.parse(userDetails['totalongoingcredit'].toString());
-      int price = int.parse(userDetails['ongoingcredit'].toString());
+      int total = int.parse(mainViewModel.userDetails['totalongoingcredit'].toString());
+      int price = int.parse(mainViewModel.userDetails['ongoingcredit'].toString());
 
       var t = (1 / (total / price));
-  
+
       return t.toDouble();
     }
-
 
     Future<void> WithdrawAmount(Amount) async {
       final prefs = await SharedPreferences.getInstance();
       int userid = int.parse(prefs.getString("userid").toString());
 
-      var url = Uri.parse(
-          '${domain}/api/POST/Study/Survey/WithdrawAmount');
-      await http.post(url,
-          headers: POSTheader,
-          body: {'userid': userid.toString(), 'amount': Amount,'walletAddress':userDetails["walletAddress"]});
+      var url = Uri.parse('${domain}/api/POST/Study/Survey/WithdrawAmount');
+      await http.post(url, headers: POSTheader, body: {
+        'userid': userid.toString(),
+        'amount': Amount,
+        'walletAddress': mainViewModel.userDetails["walletAddress"]
+      });
       await GetAccountData();
       Navigator.pop(context);
     }
 
     Future StartWithdrawDialog() => showDialog(
         context: context, builder: (context) => WithdrawDialog(WithdrawAmount));
-
-
 
     return RefreshIndicator(
         child: Container(
@@ -319,7 +212,9 @@ String domain = 'http://localhost:3000';
                             margin: const EdgeInsets.only(
                               top: 24,
                             ),
-                            child: Text(ongoingStudies['title'].toString(),
+                            child: Text(
+                                mainViewModel.ongoingStudies['title']
+                                    .toString(),
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.getFont('Lexend Deca',
                                     fontSize: 14, fontWeight: FontWeight.w700)),
@@ -430,9 +325,12 @@ String domain = 'http://localhost:3000';
                                           color:
                                               Color.fromRGBO(124, 209, 227, 1),
                                         ),
-                                        child: ongoingStudies['image'] != ""
+                                        child: mainViewModel
+                                                    .ongoingStudies['image'] !=
+                                                ""
                                             ? Image.network(
-                                                ongoingStudies['image']
+                                                mainViewModel
+                                                    .ongoingStudies['image']
                                                     .toString(),
                                                 fit: BoxFit.cover,
                                               )
