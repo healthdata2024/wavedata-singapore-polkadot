@@ -27,7 +27,7 @@ export default async function useContract() {
 		await api.isReady;
 		const keyring = new Keyring({ type: 'sr25519', ss58Format: 2 });
 
-		const pair = keyring.addFromMnemonic('bottom drive obey lake curtain smoke basket hold race lonely fit walk//Alice')
+		const pair = keyring.addFromMnemonic('bottom drive obey lake curtain smoke basket hold race lonely fit walk')
 
 		contractInstance.signerPair = pair as any;
 
@@ -66,7 +66,7 @@ async function sendTransaction(api,contract, signerAddress, method, args = null)
 	
 	const keyring = new Keyring({ type: 'sr25519', ss58Format: 2 });
 
-	const pair = keyring.addFromMnemonic('bottom drive obey lake curtain smoke basket hold race lonely fit walk//Alice')
+	const pair = keyring.addFromMnemonic('bottom drive obey lake curtain smoke basket hold race lonely fit walk')
 
 	const sendTX =	new Promise(function executor(resolve) {
 		 tx({
