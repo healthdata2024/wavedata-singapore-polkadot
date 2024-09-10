@@ -37,6 +37,7 @@ export default async function handler(req, res) {
 		Categories: allCategory
 	};
 
+
 	res.status(200).json({status: 200, value: final});
 	return;
 }

@@ -27,7 +27,7 @@ class _WearablesScreenState extends ConsumerState<WearablesScreen> {
     GetAccountData();
   }
 
-String domain = "https://wavedata-singapore-polkadot.onrender.com";
+String domain = "http://localhost:3000";
   String userid = "";
   String AccountTokenAddress = "";
   bool hasDevice = false;

@@ -25,7 +25,7 @@ export default async function handler(req, res) {
   let credits = ParseBigNum(details_element[1]) + ParseBigNum(survey_element.reward)
 
   
-  await sendTransaction(api,contract,signerAddress, "UpdateUser",[Number(userid), details_element[0], (Number(credits) * 1e18).toFixed(0)]);
+  await sendTransaction(api,contract,signerAddress, "UpdateUser",[Number(userid), details_element[0], (Number(credits) * 1e18).toFixed(0)],true);
   
   await sendTransaction(api,contract,signerAddress, "CreateCompletedSurveys",[Number(surveyid), Number(userid), date, Number(studyid)]);
 

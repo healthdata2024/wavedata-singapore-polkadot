@@ -34,7 +34,7 @@ class AuthScreenApp extends State<AuthScreen> {
     "Accept": "application/json",
     "Content-Type": "application/x-www-form-urlencoded"
   };
- String baseURL=  'https://wavedata-singapore-polkadot.onrender.com';
+ String baseURL=  'http://localhost:3000';
  
 
   @override
@@ -50,7 +50,7 @@ class AuthScreenApp extends State<AuthScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => OnboardingQuestionnaireScreen(),
+          builder: (context) => InformedConsentScreen(),
         ),
       );
     }
@@ -58,6 +58,8 @@ class AuthScreenApp extends State<AuthScreen> {
 
   Future<void> LoginAccount() async {
   //Hard coded for Signature
+
+
 
 //  await Navigator.pushReplacement( 
 //                                 context,

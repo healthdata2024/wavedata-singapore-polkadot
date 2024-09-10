@@ -23,6 +23,8 @@ import 'package:wavedata/screens/journal_screen.dart';
 import 'package:signature/signature.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
+import 'onboarding_questionnaire_screen.dart';
+
 class InformedConsentScreen extends ConsumerStatefulWidget {
   const InformedConsentScreen({Key? key}) : super(key: key);
 
@@ -36,7 +38,7 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
     "Accept": "application/json",
     "Content-Type": "application/x-www-form-urlencoded"
   };
-  String baseURL = 'https://wavedata-singapore-polkadot.onrender.com';
+  String baseURL = 'http://localhost:3000';
 
   var ages_groups = [];
   var study_title = "";
@@ -113,8 +115,10 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
   }
 
   Future<void> FinishIC() async {
+    return; //Hard Coded
     setState(() {
-      LoadingText =  "Thank you for sending your informed consent. We are now checking the outcomes, which can take around one minute. Please wait";
+      LoadingText =
+          "Thank you for sending your informed consent. We are now checking the outcomes, which can take around one minute. Please wait";
       isloading = true;
     });
 
@@ -152,9 +156,8 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
     });
     await Future.delayed(Duration(seconds: 2));
 
-     
     setState(() {
-         LoadingText =  "";
+      LoadingText = "";
       isloading = false;
     });
   }
@@ -162,9 +165,7 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
   @override
   initState() {
     super.initState();
-    GetData();   //Hard coded for Signature
-
-  
+    GetData(); //Hard coded for Signature
   }
 
   var initialized = false;
@@ -218,7 +219,7 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
                       : Text(""),
                 ],
               ))),
-      backgroundColor:Colors.white,
+      backgroundColor: Colors.white,
       body: InformConsent(
           isloading,
           LoadingText,
@@ -531,7 +532,8 @@ class _InformConsentState extends State<InformConsent> {
                       child: GestureDetector(
                         onTap: () async {
                           await FinishIC();
-                          questionnaireViewmodel.updateIndex(questionnaireViewmodel.selectedIndex + 1);
+                          questionnaireViewmodel.updateIndex(
+                              questionnaireViewmodel.selectedIndex + 1);
                           _scrollToTop();
                         },
                         child: Material(
@@ -587,12 +589,13 @@ class _InformConsentState extends State<InformConsent> {
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             GestureDetector(
               onTap: () async {
-               Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ConnectDataScreen(),
-      ),
-    );
+                
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ConnectDataScreen(),
+                  ),
+                );
               },
               child: Material(
                 borderRadius: BorderRadius.circular(8),
@@ -640,30 +643,29 @@ class _InformConsentState extends State<InformConsent> {
                 Expanded(
                     child: Center(
                         child: Container(
-                              margin: EdgeInsets.only(left: 20, right: 20, top: 80),
-                          child:  Column(
-                          
-                  children: [
-                    Text(
-                        loadingText,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.getFont('Lexend Deca',
-                            color: Color(0xFF423838),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700)),
-                    Container(
-                       margin: EdgeInsets.only(top: 40),
-                        height: 150,
-                        width: 150,
-                        child: const SizedBox(
-                          child: CircularProgressIndicator(
-                            color: Color(0xFFF06129),
-                          ),
-                          height: 150.0,
-                          width: 150.0,
-                        ))
-                  ],
-                ))))
+                            margin:
+                                EdgeInsets.only(left: 20, right: 20, top: 80),
+                            child: Column(
+                              children: [
+                                Text(loadingText,
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.getFont('Lexend Deca',
+                                        color: Color(0xFF423838),
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700)),
+                                Container(
+                                    margin: EdgeInsets.only(top: 40),
+                                    height: 150,
+                                    width: 150,
+                                    child: const SizedBox(
+                                      child: CircularProgressIndicator(
+                                        color: Color(0xFFF06129),
+                                      ),
+                                      height: 150.0,
+                                      width: 150.0,
+                                    ))
+                              ],
+                            ))))
               ]
             : [
                 Expanded(

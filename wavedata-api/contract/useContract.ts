@@ -37,6 +37,7 @@ export default async function useContract() {
 
 		contractInstance.signerAddress = pair.address as any;
 		console.log("user => " + contractInstance.signerAddress)
+		
 	} catch (error) {
 		console.error(error);
 	}
@@ -45,7 +46,7 @@ export default async function useContract() {
 }
 
 const ParseBigNum = (num)=> Number(num.replaceAll(",",""))/1e18
-async function sendTransaction(api,contract, signerAddress, method, args = null) {
+async function sendTransaction(api,contract, signerAddress, method, args = null, finalized = false) {
 	let tx = getTX(contract,method);
 	let query  = getQuery(contract,method);
 	let gasLimit;
@@ -77,8 +78,9 @@ async function sendTransaction(api,contract, signerAddress, method, args = null)
 			.signAndSend(pair, async (res) => {
 				if (res.status.isInBlock) {
 					console.log("in a block");
-					resolve("OK");
+					if  (!finalized) resolve("OK");
 				} else if (res.status.isFinalized) {
+					
 					console.log("finalized");
 					resolve("OK");
 				}

@@ -29,18 +29,19 @@ class _ConnectDataScreenState extends ConsumerState<ConnectDataScreen> {
   TextEditingController WalletAddressTXT = new TextEditingController(text: "");
 
   bool isLoading = false;
- var POSTheader = {
+  var POSTheader = {
     "Accept": "application/json",
     "Content-Type": "application/x-www-form-urlencoded"
   };
   bool termsBool = false;
-   String baseURL=  'https://wavedata-singapore-polkadot.onrender.com';
- 
+  String baseURL = 'http://localhost:3000';
+
   @override
   initState() {
     GetData();
     super.initState();
   }
+
   Future<void> GetData() async {
     final prefs = await SharedPreferences.getInstance();
     var userid = prefs.getString("userid");
@@ -60,8 +61,8 @@ class _ConnectDataScreenState extends ConsumerState<ConnectDataScreen> {
     }
   }
 
-  
   Future<void> ConnectData() async {
+   
     final prefs = await SharedPreferences.getInstance();
     var userid = prefs.getString("userid");
     try {
@@ -78,7 +79,7 @@ class _ConnectDataScreenState extends ConsumerState<ConnectDataScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => MainScreen(),
+            builder: (context) => OnboardingQuestionnaireScreen(),
           ),
         );
       }
@@ -96,7 +97,6 @@ class _ConnectDataScreenState extends ConsumerState<ConnectDataScreen> {
     var size = MediaQuery.of(context).size;
 
     var feelingViewmodel = ref.watch(feelingProvider);
-
 
     return Scaffold(
       backgroundColor: Colors.white,

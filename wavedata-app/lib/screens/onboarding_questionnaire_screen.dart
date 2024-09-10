@@ -28,48 +28,48 @@ class _OnboardingQuestionnaireScreenState
     "Accept": "application/json",
     "Content-Type": "application/x-www-form-urlencoded"
   };
-  String domain = 'https://wavedata-singapore-polkadot.onrender.com';
+  String domain = 'http://localhost:3000';
   String userid = "";
   var allQuestions = [
-      Question(
-          id: "1",
-          content: "Which form of sickle cell disease do you have?",
-          questionid: "1",
-          QuestionType: "tick",
-          QuestionType2: "tick",
-          Answer: "",
-          AnswerOptions: [
-            "HbSS",
-            "HbSC, HbSβ0",
-            "thalassemia, HbSβ+ thalassemia",
-            "I don’t know"
-          ]),
-      Question(
-          id: "2",
-          content: "How many crises did you have in the last 12 months?",
-          questionid: "2",
-          QuestionType: "tick",
-          QuestionType2: "tick",
-          Answer: "",
-          AnswerOptions: ["0", "1", "2", "3", "4", "5", ">5"]),
-      Question(
-          id: "3",
-          content: "How often have you been hospitalized for a crisis?",
-          questionid: "3",
-          QuestionType: "tick",
-          QuestionType2: "tick",
-          Answer: "",
-          AnswerOptions: ["0", "1", "2", "3", "4", "5", ">5"]),
-      Question(
-          id: "4",
-          content:
-              "How many times did you receive a blood-transfusion in the last 6 months?",
-          questionid: "4",
-          QuestionType: "tick",
-          QuestionType2: "tick",
-          Answer: "",
-          AnswerOptions: ["0", "1", "2", "3", "4", "5", ">5"])
-    ];
+    Question(
+        id: "1",
+        content: "Which form of sickle cell disease do you have?",
+        questionid: "1",
+        QuestionType: "tick",
+        QuestionType2: "tick",
+        Answer: "",
+        AnswerOptions: [
+          "HbSS",
+          "HbSC, HbSβ0",
+          "thalassemia, HbSβ+ thalassemia",
+          "I don’t know"
+        ]),
+    Question(
+        id: "2",
+        content: "How many crises did you have in the last 12 months?",
+        questionid: "2",
+        QuestionType: "tick",
+        QuestionType2: "tick",
+        Answer: "",
+        AnswerOptions: ["0", "1", "2", "3", "4", "5", ">5"]),
+    Question(
+        id: "3",
+        content: "How often have you been hospitalized for a crisis?",
+        questionid: "3",
+        QuestionType: "tick",
+        QuestionType2: "tick",
+        Answer: "",
+        AnswerOptions: ["0", "1", "2", "3", "4", "5", ">5"]),
+    Question(
+        id: "4",
+        content:
+            "How many times did you receive a blood-transfusion in the last 6 months?",
+        questionid: "4",
+        QuestionType: "tick",
+        QuestionType2: "tick",
+        Answer: "",
+        AnswerOptions: ["0", "1", "2", "3", "4", "5", ">5"])
+  ];
 
   bool isloading = true;
   Future<void> GetData() async {
@@ -118,6 +118,8 @@ class _OnboardingQuestionnaireScreenState
 
   @override
   initState() {
+    var questionnaireViewmodel = ref.watch(questionnaireProvider);
+    questionnaireViewmodel.updateIndex(0);
     super.initState();
     GetData();
   }
@@ -126,7 +128,7 @@ class _OnboardingQuestionnaireScreenState
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     var questionnaireViewmodel = ref.watch(questionnaireProvider);
-  
+
     Widget renderSections() {
       return Column(
         children: [

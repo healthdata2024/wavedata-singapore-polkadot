@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'informedconsent_screen.dart';
 import 'connect_data.dart';
+import 'onboarding_questionnaire_screen.dart';
 
 class GetStudyIDScreen extends StatelessWidget {
   const GetStudyIDScreen({Key? key}) : super(key: key);
@@ -65,6 +66,8 @@ class GetStudyIDScreen extends StatelessWidget {
                 onTap: () async {
                   final prefs = await SharedPreferences.getInstance();
                   prefs.setString("studyid", StudyIdText.text);
+                  
+    
                   await Navigator.push(
                     context,
                     MaterialPageRoute(

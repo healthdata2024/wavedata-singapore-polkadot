@@ -104,9 +104,9 @@ export default async function handler(req, res) {
         eligible_age_group: eligible_age_group
     };
 
-
-
+    
     res.status(200).json({ status: 200, value: JSON.stringify(newStudy) })
+    
     return;
 
 }

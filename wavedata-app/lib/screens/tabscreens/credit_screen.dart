@@ -35,8 +35,7 @@ class _CreditScreenState extends ConsumerState<CreditScreen> {
   };
 
   int userid = 0;
-  String domain = 'https://wavedata-singapore-polkadot.onrender.com';
-
+  String domain = 'http://localhost:3000';
 
   Future<void> GetAccountData() async {
     // Obtain shared preferences.
@@ -46,7 +45,7 @@ class _CreditScreenState extends ConsumerState<CreditScreen> {
     });
     final mainViewModel = ref.watch(mainProvider);
 
-   await mainViewModel.GetUserData();
+    await mainViewModel.GetUserData();
     mainViewModel.GetOngoingData();
   }
 
@@ -90,8 +89,10 @@ class _CreditScreenState extends ConsumerState<CreditScreen> {
     }
 
     double percentagecompleted() {
-      int total = int.parse(mainViewModel.userDetails['totalongoingcredit'].toString());
-      int price = int.parse(mainViewModel.userDetails['ongoingcredit'].toString());
+      int total =
+          int.parse(mainViewModel.userDetails['totalongoingcredit'].toString());
+      int price =
+          int.parse(mainViewModel.userDetails['ongoingcredit'].toString());
 
       var t = (1 / (total / price));
 
@@ -162,7 +163,8 @@ class _CreditScreenState extends ConsumerState<CreditScreen> {
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w700)),
                                         Text(
-                                            mainViewModel.userDetails['credits'].toString() +
+                                            mainViewModel.userDetails['credits']
+                                                    .toString() +
                                                 " SBY",
                                             style: GoogleFonts.getFont(
                                                 'Lexend Deca',
@@ -250,7 +252,8 @@ class _CreditScreenState extends ConsumerState<CreditScreen> {
                                       percent: mainViewModel.userDetails[
                                                       'totalongoingcredit'] ==
                                                   null ||
-                                              mainViewModel.userDetails['ongoingcredit'] ==
+                                              mainViewModel.userDetails[
+                                                      'ongoingcredit'] ==
                                                   null
                                           ? 0
                                           : percentagecompleted(),
@@ -258,48 +261,22 @@ class _CreditScreenState extends ConsumerState<CreditScreen> {
                                           CircularStrokeCap.round,
                                       progressColor: Color(0xFFf06129),
                                       backgroundColor: Color(0xFF7CD1E3),
-                                      center: SizedBox(
-                                        width: 550,
-                                        child: Container(
+                                      center: Container(
+                                          margin: EdgeInsets.all(8),
                                           decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(128),
                                           ),
-                                          child: Container(
-                                            margin: EdgeInsets.only(top: 8),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  "Total credits",
-                                                  style: GoogleFonts.getFont(
-                                                      'Lexend Deca',
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w700),
-                                                ),
-                                                Text(
-                                                    ((mainViewModel.userDetails['ongoingcredit'] !=
-                                                                    null)
-                                                                ? mainViewModel.userDetails[
-                                                                    'ongoingcredit']
-                                                                : 0)
-                                                            .toString() +
-                                                        " SBY",
-                                                    style: GoogleFonts.getFont(
-                                                        'Lexend Deca',
-                                                        color:
-                                                            Color(0xFFF06129),
-                                                        fontSize: 20,
-                                                        fontWeight:
-                                                            FontWeight.w700))
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
+                                          child: mainViewModel.ongoingStudies[
+                                                      'image'] !=
+                                                  ""
+                                              ? Image.network(
+                                                  mainViewModel
+                                                      .ongoingStudies['image']
+                                                      .toString(),
+                                                  fit: BoxFit.cover,
+                                                )
+                                              : Text("")),
                                     ),
                                   ],
                                 ),
@@ -317,16 +294,7 @@ class _CreditScreenState extends ConsumerState<CreditScreen> {
                                           color:
                                               Color.fromRGBO(124, 209, 227, 1),
                                         ),
-                                        child: mainViewModel
-                                                    .ongoingStudies['image'] !=
-                                                ""
-                                            ? Image.network(
-                                                mainViewModel
-                                                    .ongoingStudies['image']
-                                                    .toString(),
-                                                fit: BoxFit.cover,
-                                              )
-                                            : Text("")),
+                                        child: Text("")),
                                   ),
                                 ),
                                 Container(
@@ -398,9 +366,19 @@ class _CreditScreenState extends ConsumerState<CreditScreen> {
                                                                 .only(
                                                             top: 24,
                                                             bottom: 24),
-                                                        child: Image.asset(
-                                                            dummyOffers[index]
-                                                                .image)),
+                                                        child: mainViewModel
+                                                                        .ongoingStudies[
+                                                                    'image'] !=
+                                                                ""
+                                                            ? Image.network(
+                                                                mainViewModel
+                                                                    .ongoingStudies[
+                                                                        'image']
+                                                                    .toString(),
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                              )
+                                                            : Text("")),
                                                   ],
                                                 ),
                                                 Container(
