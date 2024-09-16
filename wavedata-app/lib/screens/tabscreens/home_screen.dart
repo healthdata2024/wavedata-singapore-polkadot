@@ -35,7 +35,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   };
 
 
-  String domain = 'http://localhost:3000';
+  String domain = 'https://wavedata-singapore-polkadot.onrender.com';
 
   String userid = "";
   String StudyId = "";

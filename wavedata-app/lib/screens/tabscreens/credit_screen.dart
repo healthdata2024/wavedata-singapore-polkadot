@@ -35,7 +35,7 @@ class _CreditScreenState extends ConsumerState<CreditScreen> {
   };
 
   int userid = 0;
-  String domain = 'http://localhost:3000';
+  String domain = 'https://wavedata-singapore-polkadot.onrender.com';
 
   Future<void> GetAccountData() async {
     // Obtain shared preferences.
@@ -262,10 +262,12 @@ class _CreditScreenState extends ConsumerState<CreditScreen> {
                                       progressColor: Color(0xFFf06129),
                                       backgroundColor: Color(0xFF7CD1E3),
                                       center: Container(
+                                        clipBehavior: Clip.hardEdge,
                                           margin: EdgeInsets.all(8),
                                           decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(128),
+                                                
                                           ),
                                           child: mainViewModel.ongoingStudies[
                                                       'image'] !=
@@ -357,7 +359,7 @@ class _CreditScreenState extends ConsumerState<CreditScreen> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Row(
+                                                 Row(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.center,
                                                   children: [
@@ -366,19 +368,9 @@ class _CreditScreenState extends ConsumerState<CreditScreen> {
                                                                 .only(
                                                             top: 24,
                                                             bottom: 24),
-                                                        child: mainViewModel
-                                                                        .ongoingStudies[
-                                                                    'image'] !=
-                                                                ""
-                                                            ? Image.network(
-                                                                mainViewModel
-                                                                    .ongoingStudies[
-                                                                        'image']
-                                                                    .toString(),
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                              )
-                                                            : Text("")),
+                                                        child: Image.asset(
+                                                            dummyOffers[index]
+                                                                .image)),
                                                   ],
                                                 ),
                                                 Container(

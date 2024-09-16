@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 
 import '../model/study_action.dart';
 
-const domain = 'http://localhost:3000';
+const domain = 'https://wavedata-singapore-polkadot.onrender.com';
 
 final mainProvider =
     ChangeNotifierProvider<MainProvider>((ref) => MainProvider());

@@ -38,7 +38,7 @@ class _InformedConsentScreenState extends ConsumerState<InformedConsentScreen> {
     "Accept": "application/json",
     "Content-Type": "application/x-www-form-urlencoded"
   };
-  String baseURL = 'http://localhost:3000';
+  String baseURL = 'https://wavedata-singapore-polkadot.onrender.com';
 
   var ages_groups = [];
   var study_title = "";
